@@ -3,6 +3,8 @@ from flask import Flask
 from flask_cors import CORS
 from extensions import db
 
+# Hi jun! This is Sedric. I'm testing my Git and GitHub skills.
+
 # Import the Waiter (Routes) we made
 from routes.api_routes import api_bp
 from routes.post_routes import post_bp
