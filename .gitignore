@@ -17,3 +17,6 @@ frontend/dist/
 # IDE
 .vscode/
 .DS_Store
+
+# Database
+backend/instance/campusbuddy.db
