@@ -4,8 +4,6 @@ from flask_cors import CORS
 from extensions import db
 from routes.weather_routes import weather_bp
 
-# Hi jun! This is Sedric. I'm testing my Git and GitHub skills. Second Try
-
 # Import the Waiter (Routes) we made
 from routes.api_routes import api_bp
 from routes.post_routes import post_bp
@@ -30,7 +28,11 @@ app.register_blueprint(comment_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(weather_bp)
 
-# Start the server!
+# Create the database file/tabcles if they don't already exist
+with app.app_context():
+    db.create_all()
+
+# Start the server
 if __name__ == '__main__':
     # Run on port 5000 with auto-reload (debug=True)
     app.run(debug=True, port=5000)

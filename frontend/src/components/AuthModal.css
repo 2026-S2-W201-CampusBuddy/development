@@ -1,0 +1,76 @@
+/* Authentication Modal Styles */
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 10, 18, 0.6);
+  backdrop-filter: blur(16px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+.modalDialog {
+  width: 100%;
+  max-width: 430px;
+  padding: 34px 30px;
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+  position: relative;
+  animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modalPop { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+.modalCloseBtn {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 20px;
+  cursor: pointer;
+}
+.modalCloseBtn:hover { color: #ffffff; }
+.modalHeader { text-align: center; margin-bottom: 24px; }
+.modalHeading { font-family: var(--fontDisplay); font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+.modalCaption { font-size: 13px; color: rgba(255, 255, 255, 0.65); }
+.formStack { display: flex; flex-direction: column; gap: 14px; }
+.inputFieldGroup { display: flex; flex-direction: column; gap: 6px; text-align: left; }
+.fieldLabel { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: rgba(255, 255, 255, 0.85); }
+.liquidInput {
+  width: 100%;
+  padding: 11px 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-family: var(--fontUi);
+  font-size: 14px;
+  outline: none;
+  transition: all 0.25s;
+}
+.liquidInput:focus {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: var(--cyanGlow);
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.25);
+}
+.btnFullWidth { width: 100%; padding: 13px; margin-top: 6px; font-size: 15px; }
+.modalFooterSwitch { margin-top: 16px; text-align: center; font-size: 13px; color: rgba(255, 255, 255, 0.6); }
+.linkToggle {
+  background: transparent;
+  border: none;
+  color: var(--cyanGlow);
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 6px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
