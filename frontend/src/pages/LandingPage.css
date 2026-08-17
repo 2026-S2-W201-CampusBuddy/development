@@ -1,0 +1,50 @@
+/* Landing Page Hero Styles */
+.heroWrapper {
+  width: 100%;
+  max-width: 1320px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  z-index: 10;
+}
+
+.heroPillBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(12px);
+  font-size: 13px;
+  color: var(--cyanGlow);
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.heroHeading {
+  font-family: var(--fontDisplay);
+  font-size: clamp(34px, 3.4vw, 50px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  margin-bottom: 8px;
+}
+
+.heroHeading span {
+  background: linear-gradient(135deg, #ffffff 40%, var(--cyanGlow) 80%, var(--purpleGlow) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.heroSubheading {
+  font-size: clamp(14px, 1.1vw, 16.5px);
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.65);
+  max-width: 600px;
+  margin-bottom: 24px;
+}
