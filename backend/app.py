@@ -3,15 +3,11 @@ from flask import Flask
 from flask_cors import CORS
 from extensions import db
 
-# Hi jun! This is Sedric. I'm testing my Git and GitHub skills. Second Try
-
 # Import the Waiter (Routes) we made
 from routes.api_routes import api_bp
 from routes.post_routes import post_bp
 from routes.comment_routes import comment_bp
 from routes.auth_routes import auth_bp
-
-# This is george.
 
 # Initialize the Flask app
 app = Flask(__name__)
