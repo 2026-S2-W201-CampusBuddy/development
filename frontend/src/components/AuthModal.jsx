@@ -1,16 +1,32 @@
 import { useState } from 'react'
+import { registerUser, loginUser } from '../api'
 import './AuthModal.css'
 
 export default function AuthModal({ authMode, onClose, onAuthSuccess, onSwitchMode }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [username, setUsername] = useState('')
+  const [error, setError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   if (!authMode) return null
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    onAuthSuccess({ email, username: username || 'Student' })
+    setIsSubmitting(true)
+    setError('')
+
+    try {
+      const result = 
+        authMode === 'signup'
+          ? await registerUser(username, password)
+          : await loginUser(username, password)
+      onAuthSuccess({username: result.data.username})
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -30,7 +46,6 @@ export default function AuthModal({ authMode, onClose, onAuthSuccess, onSwitchMo
         </div>
 
         <form className="formStack" onSubmit={handleSubmit}>
-          {authMode === 'signup' && (
             <div className="inputFieldGroup">
               <label className="fieldLabel">Username</label>
               <input
@@ -42,8 +57,9 @@ export default function AuthModal({ authMode, onClose, onAuthSuccess, onSwitchMo
                 required
               />
             </div>
-          )}
 
+          
+          {authMode === 'signup' && (
           <div className="inputFieldGroup">
             <label className="fieldLabel">University Email</label>
             <input
@@ -55,6 +71,7 @@ export default function AuthModal({ authMode, onClose, onAuthSuccess, onSwitchMo
               required
             />
           </div>
+          )}
 
           <div className="inputFieldGroup">
             <label className="fieldLabel">Password</label>
@@ -68,8 +85,10 @@ export default function AuthModal({ authMode, onClose, onAuthSuccess, onSwitchMo
             />
           </div>
 
-          <button type="submit" className="btnGlass btnPrimary btnFullWidth">
-            {authMode === 'signup' ? 'Create Account →' : 'Sign In →'}
+          {error && <p className="formError">{error}</p>}
+
+          <button type="submit" className="btnGlass btnPrimary btnFullWidth" disabled={isSubmitting}>
+            {isSubmitting ? 'Please wait...' : authMode === 'signup' ? 'Sign Up' : 'Sign In'}
           </button>
         </form>
 
