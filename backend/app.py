@@ -9,8 +9,6 @@ from routes.post_routes import post_bp
 from routes.comment_routes import comment_bp
 from routes.auth_routes import auth_bp
 
-# This is george.
-
 # Initialize the Flask app
 app = Flask(__name__)
 # Let React (port 5173) talk to our Flask (port 5000)
