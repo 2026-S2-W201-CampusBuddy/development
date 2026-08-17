@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import WeatherNotification from './components/WeatherNotification'
 import './App.css'
 
 // useState -> to remember/store a value (data)
@@ -144,6 +145,7 @@ function handleLogout() {
           // Show this if the user IS logged in
           <>
             <h1>CampusBuddy Community</h1>
+            <WeatherNotification />
 
             {/* Logout button */}
             <button onClick={handleLogout}>Log Out</button>
