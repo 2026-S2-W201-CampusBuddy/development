@@ -26,7 +26,11 @@ app.register_blueprint(post_bp)
 app.register_blueprint(comment_bp)
 app.register_blueprint(auth_bp)
 
-# Start the server!
+# Create the database file/tabcles if they don't already exist
+with app.app_context():
+    db.create_all()
+
+# Start the server
 if __name__ == '__main__':
     # Run on port 5000 with auto-reload (debug=True)
     app.run(debug=True, port=5000)
