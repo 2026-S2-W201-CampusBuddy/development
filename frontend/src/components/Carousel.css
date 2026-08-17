@@ -1,0 +1,69 @@
+/* 3D Showcase Carousel Styles */
+.carouselStage {
+  width: 100%;
+  max-width: 1100px;
+  height: 270px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 1200px;
+  z-index: 15;
+}
+
+.landscapeGlassCard {
+  width: 420px;
+  height: 240px;
+  position: absolute;
+  border-radius: 22px;
+  background: var(--glassSurface);
+  border: 1px solid var(--glassBorder);
+  backdrop-filter: var(--glassBlur);
+  -webkit-backdrop-filter: var(--glassBlur);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35), inset 0 1px 1px var(--glassHighlight);
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.cardTopRow { display: flex; justify-content: space-between; align-items: center; }
+.cardCategoryBadge {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+.cardIconPill { font-size: 24px; }
+.cardBodyContent { text-align: left; }
+.cardTitle { font-family: var(--fontDisplay); font-size: 20px; font-weight: 700; margin-bottom: 6px; color: #ffffff; }
+.cardDescription { font-size: 13px; line-height: 1.45; color: rgba(255, 255, 255, 0.68); }
+.cardBottomRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 10px;
+  font-size: 12.5px;
+  color: var(--cyanGlow);
+  font-weight: 600;
+}
+
+.posCenter { transform: translateX(0px) translateZ(80px) rotateY(0deg) scale(1.04); z-index: 10; opacity: 1; border-color: rgba(255, 255, 255, 0.45); }
+.posLeft1 { transform: translateX(-320px) translateZ(-40px) rotateY(16deg) scale(0.88); z-index: 5; opacity: 0.65; }
+.posRight1 { transform: translateX(320px) translateZ(-40px) rotateY(-16deg) scale(0.88); z-index: 5; opacity: 0.65; }
+.posLeft2 { transform: translateX(-560px) translateZ(-140px) rotateY(26deg) scale(0.74); z-index: 2; opacity: 0.25; pointer-events: none; }
+.posRight2 { transform: translateX(560px) translateZ(-140px) rotateY(-26deg) scale(0.74); z-index: 2; opacity: 0.25; pointer-events: none; }
+.posHidden { transform: translateX(0px) translateZ(-260px) scale(0.5); z-index: 0; opacity: 0; pointer-events: none; }
+
+.carouselIndicators { display: flex; gap: 8px; margin-top: 16px; z-index: 20; }
+.indicatorDot { width: 8px; height: 8px; border-radius: 999px; background: rgba(255, 255, 255, 0.2); border: none; cursor: pointer; transition: all 0.3s; }
+.indicatorDot.active { width: 26px; background: var(--cyanGlow); box-shadow: 0 0 12px var(--cyanGlow); }

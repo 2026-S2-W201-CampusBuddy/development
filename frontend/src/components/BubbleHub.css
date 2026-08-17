@@ -1,0 +1,90 @@
+/* Apple Watch Honeycomb Springboard Grid Styles */
+.honeycombContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  padding: 10px;
+}
+
+.honeycombRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--orbGap);
+  margin-top: calc(-1 * var(--orbBaseSize) * 0.10); /* Tuning setting */
+  position: relative;
+}
+
+.honeycombRow:first-child {
+  margin-top: 0;
+}
+
+.watchOrb {
+  width: var(--orbBaseSize);
+  height: var(--orbBaseSize);
+  border-radius: 50%;
+  background: var(--glassSurface);
+  border: 1.8px solid var(--glassBorder);
+  backdrop-filter: var(--glassBlur);
+  -webkit-backdrop-filter: var(--glassBlur);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.38), inset 0 2px 4px var(--glassHighlight);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transform: translate(var(--pushX, 0px), var(--pushY, 0px)) scale(var(--baseScale, 1));
+  transition: transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1), 
+              box-shadow 0.32s ease, 
+              background 0.32s ease, 
+              border-color 0.32s ease;
+  position: relative;
+  z-index: 5;
+}
+
+.watchOrb.isHoveredOrb {
+  transform: translate(0px, -8px) scale(1.34) !important;
+  z-index: 60 !important;
+  border-color: var(--accentColor, rgba(255, 255, 255, 0.95));
+  background: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 28px 70px var(--glowColor, rgba(56, 189, 248, 0.6)), inset 0 2px 6px rgba(255, 255, 255, 0.95);
+}
+
+.orbIcon {
+  font-size: clamp(30px, 2.5vw, 42px);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.watchOrb.isHoveredOrb .orbIcon {
+  transform: scale(1.15);
+}
+
+.orbLabel {
+  font-family: var(--fontDisplay);
+  font-size: clamp(11.5px, 0.88vw, 14px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+  margin-top: 4px;
+  opacity: 0.92;
+  text-align: center;
+  padding: 0 6px;
+  white-space: nowrap;
+  transition: all 0.25s;
+}
+
+.watchOrb.isHoveredOrb .orbLabel {
+  color: var(--accentColor, var(--cyanGlow));
+  opacity: 1;
+  text-shadow: 0 0 12px var(--glowColor, rgba(56, 189, 248, 0.6));
+}
+
+.clockOrbTime {
+  font-family: var(--fontDisplay);
+  font-size: clamp(20px, 1.6vw, 26px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
