@@ -3,6 +3,7 @@ import Navbar from './components/Navbar'
 import AuthModal from './components/AuthModal'
 import LandingPage from './pages/LandingPage'
 import MainPage from './pages/MainPage'
+import WeatherNotification from './components/WeatherNotification'
 
 function App() {
   const [currentPage, setCurrentPage] = useState('landing')
@@ -25,7 +26,14 @@ function App() {
         loggedUser={loggedUser}
       />
 
-      {currentPage === 'landing' ? <LandingPage /> : <MainPage />}
+      {currentPage === 'landing' ? (
+        <LandingPage />
+      ) : (
+        <>
+          <WeatherNotification />
+          <MainPage />
+        </>
+      )}
 
       <AuthModal
         authMode={authMode}
