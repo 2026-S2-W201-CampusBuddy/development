@@ -23,6 +23,7 @@
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.6);
   position: relative;
   animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  box-sizing: border-box;
 }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }

@@ -6,6 +6,7 @@
   justify-content: center;
   user-select: none;
   padding: 10px;
+  transform: translateY(-20px);
 }
 
 .honeycombRow {
