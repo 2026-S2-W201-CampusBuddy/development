@@ -61,6 +61,13 @@ export default function useWeather() {
 
   useEffect(() => {
     fetchWeather()
+
+    // Auckland's weather doesn't change fast enough to justify anything
+    // more frequent — hourly keeps it fresh without hammering the API
+    const HOUR_IN_MS = 60 * 60 * 1000
+    const intervalId = setInterval(fetchWeather, HOUR_IN_MS)
+
+    return () => clearInterval(intervalId)
   }, [fetchWeather])
 
   // Called when the user explicitly opts in (e.g. clicks "Enable Morning Alerts").
