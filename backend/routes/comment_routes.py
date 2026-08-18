@@ -1,6 +1,6 @@
 # This file is like a "Waiter" who handles web addresses for posts
 from flask import Blueprint, jsonify, request
-from controllers.comment_controller import create_comment_logic
+from controllers.comment_controller import create_comment_logic, get_comments_logic
 
 # Group our post-related API addresses together
 comment_bp = Blueprint('comment', __name__, url_prefix='/api')
@@ -37,7 +37,12 @@ def create_comment(post_id):
     author = data['author']
     
     # Ask the Controller (Chef) to handle the logic
-    result = create_comment_logic(post_id, content, author)
+    result, status_code = create_comment_logic(post_id, content, author)
     
     # Turn the result into JSON format so React can read it
-    return jsonify(result), 201
+    return jsonify(result), status_code
+
+@comment_bp.route('/posts/<int:post_id>/comments', methods=['GET'])
+def get_comments(post_id):
+    result, status_code = get_comments_logic(post_id)
+    return jsonify(result), status_code
