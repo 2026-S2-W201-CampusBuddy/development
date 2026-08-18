@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
 import BubbleHub from '../components/BubbleHub'
 import WeatherModal from '../components/WeatherModal'
+import CommunityModal from '../components/CommunityModal'
 import useWeather from '../hooks/useWeather'
 import './MainPage.css'
 
-export default function MainPage() {
+export default function MainPage({ loggedUser }) {
   const [liveTime, setLiveTime] = useState('')
   const [isWeatherOpen, setIsWeatherOpen] = useState(false)
+  const [communityView, setCommunityView] = useState(null)
   const { weather } = useWeather()
 
   useEffect(() => {
@@ -35,10 +37,10 @@ export default function MainPage() {
     // Row 2 (4 Orbs)
     [
       { id: 'market', icon: '🛒', label: 'Perks', accentColor: '#fb7185', glowColor: 'rgba(251, 113, 133, 0.4)', action: () => alert('Perks Marketplace') },
-      { id: 'quickAdd', icon: '➕', label: 'New Post', accentColor: '#a78bfa', glowColor: 'rgba(167, 139, 250, 0.4)', action: () => alert('Create Post') },
-      { id: 'community', icon: '💬', label: 'Community', accentColor: '#818cf8', glowColor: 'rgba(129, 140, 248, 0.4)', action: () => alert('Community Feed') },
+      { id: 'quickAdd', icon: '➕', label: 'New Post', accentColor: '#a78bfa', glowColor: 'rgba(167, 139, 250, 0.4)', action: () => setCommunityView('new') },
+      { id: 'community', icon: '💬', label: 'Community', accentColor: '#818cf8', glowColor: 'rgba(129, 140, 248, 0.4)', action: () => setCommunityView('list') },
       { id: 'shuttle', icon: '🚌', label: 'Shuttle', accentColor: '#fb923c', glowColor: 'rgba(251, 146, 60, 0.4)', action: () => alert('Shuttle Bus') }
-    ],
+        ],
     // Row 3 (5 Orbs with Central Clock)
     [
       { id: 'study', icon: '📚', label: 'Study Squad', accentColor: '#2dd4bf', glowColor: 'rgba(45, 212, 191, 0.4)', action: () => alert('Study Squad') },
@@ -66,6 +68,7 @@ export default function MainPage() {
     <main className="mainHubWrapper">
       <BubbleHub honeycombRows={honeycombRows} liveTime={liveTime} />
       <WeatherModal isOpen={isWeatherOpen} onClose={() => setIsWeatherOpen(false)} />
+      <CommunityModal isOpen={communityView !== null} initialView={communityView || 'list'} onClose={() => setCommunityView(null)} currentUser={loggedUser}/>  
     </main>
   )
 }

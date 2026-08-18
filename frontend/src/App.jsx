@@ -25,7 +25,7 @@ function App() {
         loggedUser={loggedUser}
       />
 
-      {currentPage === 'landing' ? <LandingPage /> : <MainPage />}
+      {currentPage === 'landing' ? <LandingPage /> : <MainPage loggedUser={loggedUser} />}
 
       <AuthModal
         authMode={authMode}
