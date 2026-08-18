@@ -34,3 +34,36 @@ export async function getAucklandWeather() {
     const response = await fetch(`${BASE_URL}/api/weather/auckland`)
     return handleResponse(response)
 }
+
+export async function getPosts() {
+    const response = await fetch(`${BASE_URL}/api/posts`)
+    return handleResponse(response)
+}
+
+export async function getPost(postId) {
+    const response = await fetch(`${BASE_URL}/api/posts/${postId}`)
+    return handleResponse(response)
+}
+
+export async function createPost(title, content, author) {
+    const response = await fetch(`${BASE_URL}/api/posts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, content, author }),
+  })
+    return handleResponse(response)
+}
+
+export async function getComments(postId) {
+    const response = await fetch(`${BASE_URL}/api/posts/${postId}/comments`)
+    return handleResponse(response)
+}
+
+export async function createComment(postId, content, author) {
+    const response = await fetch(`${BASE_URL}/api/posts/${postId}/comments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content, author }),
+  })
+    return handleResponse(response)
+}
