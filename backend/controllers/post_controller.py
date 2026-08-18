@@ -19,14 +19,24 @@ def get_posts_logic():
     # 1. Ask the Model (Warehouse) for all saved posts
     all_posts = Post.get_all_posts()
 
-    # 2. Turns each Post object into a dictionary
-    posts_list = []
-    for post in all_posts:
-        posts_list.append(post.to_dict())
-    
-    # 3. Wrap it with a status and message, ready for the frontend
+    posts_list = [post.to_dict() for post in all_posts]
     return {
         "status": "success",
         "message": "Posts retrieved successfully",
         "data": posts_list
     }
+
+def get_single_post_logic(post_id):
+    post = Post.query.get(post_id)
+
+    if not post:
+        return {
+            "status": "error",
+            "message": "Post not found"
+        }, 404
+
+    return {
+        "status": "success",
+        "message": "Post retrieved successfully",
+        "data": post.to_dict()
+    },200
