@@ -1,12 +1,83 @@
-/* Main Hub Page Wrapper Styles */
-.mainHubWrapper {
+/* ==========================================================================
+   Hub Modals Common Frame & Fixed Close Button
+   ========================================================================== */
+
+/* Main modal container — Fixed size, NO overall scrollbar */
+.hubModalDialog {
+  width: 80vw !important;
+  height: 80vh !important;
+  max-width: 1100px !important;
+  max-height: 850px !important;
+  position: relative !important;
+  padding: 0 !important; /* Padding moved to inner body */
+  overflow: hidden !important; /* Prevents close button from scrolling */
+  display: flex !important;
+  flex-direction: column !important;
+  box-sizing: border-box;
+}
+
+/* Inner scrollable area */
+.hubModalBody {
   width: 100%;
-  max-width: 1400px;
-  flex: 1;
+  height: 100%;
+  padding: 40px 48px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  z-index: 10;
+  justify-content: space-between;
+
+  /* Custom Slim Glass Scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+}
+
+.hubModalBody::-webkit-scrollbar {
+  width: 6px;
+}
+
+.hubModalBody::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 20px 0;
+}
+
+.hubModalBody::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
+}
+
+.hubModalBody::-webkit-scrollbar-thumb:hover {
+  background: rgba(56, 189, 248, 0.5);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+}
+
+/* Fixed Close Button — cleanly floats at the top-right corner */
+.hubModalDialog .modalCloseBtn {
+  position: absolute !important;
+  top: 20px !important;
+  right: 24px !important;
+  z-index: 999 !important;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 32px !important;
+  height: 32px !important;
+  font-size: 22px !important;
+  font-weight: 300 !important;
+  line-height: 32px !important;
+  text-align: center !important;
+  color: rgba(255, 255, 255, 0.5) !important;
+  cursor: pointer !important;
+  transition: color 0.2s ease, transform 0.2s ease !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+
+.hubModalDialog .modalCloseBtn:hover {
+  color: #ffffff !important;
+  transform: scale(1.18) !important;
 }
