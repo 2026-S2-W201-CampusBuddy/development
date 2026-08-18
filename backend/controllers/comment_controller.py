@@ -1,13 +1,35 @@
-# This file is like a "Chef" who handles the logic for posts
-from models.comment_model import CommentModel
+from models.comment_model import Comment
+from models.post_model import Post
 
 def create_comment_logic(post_id, content, author):
-    # 1. Ask the Model (Warehouse) to save the new comment
-    new_comment = CommentModel.add_comment(post_id, content, author)
-    
-    # 2. Wrap it with a status and message, ready for the frontend
+    post = Post.query.get(post_id)
+    if not post:
+        return{
+            "status": "error",
+            "message": "Post not found"
+            }, 404
+
+    new_comment = Comment.add_comment(post_id, content, author)
+
     return {
         "status": "success",
         "message": "Comment created successfully",
-        "data": new_comment
-    }
+        "data": new_comment.to_dict()
+    },201
+
+def get_comments_logic(post_id):
+    post = Post.query.get(post_id)
+    if not post:
+        return {
+            "status": "error",
+            "message": "Post not found"
+        }, 404
+
+    comments = Comment.get_comments_for_post(post_id)
+    comments_list = [comment.to_dict() for comment in comments]
+
+    return {
+        "status": "success",
+        "message": "Comments retrieved successfully",
+        "data": comments_list
+    }, 200
