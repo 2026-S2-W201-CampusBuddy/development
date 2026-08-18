@@ -29,3 +29,8 @@ export async function loginUser(username, password) {
     })
     return handleResponse(response)
 }
+
+export async function getAucklandWeather() {
+    const response = await fetch(`${BASE_URL}/api/weather/auckland`)
+    return handleResponse(response)
+}

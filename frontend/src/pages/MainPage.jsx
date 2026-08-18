@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react'
 import BubbleHub from '../components/BubbleHub'
+import WeatherModal from '../components/WeatherModal'
+import useWeather from '../hooks/useWeather'
 import './MainPage.css'
 
 export default function MainPage() {
   const [liveTime, setLiveTime] = useState('')
+  const [isWeatherOpen, setIsWeatherOpen] = useState(false)
+  const { weather } = useWeather()
 
   useEffect(() => {
     const updateTime = () => {
@@ -17,10 +21,14 @@ export default function MainPage() {
     return () => clearInterval(timer)
   }, [])
 
+  // Falls back to a placeholder while the real forecast is still loading
+  const weatherOrbIcon = weather ? weather.icon : '⛅'
+  const weatherOrbLabel = weather ? `${Math.round(weather.current_temp)}°C AKL` : 'Loading...'
+
   const honeycombRows = [
     // Row 1 (3 Orbs)
     [
-      { id: 'weather', icon: '⛅', label: '15°C AKL', accentColor: '#fbbf24', glowColor: 'rgba(251, 191, 36, 0.4)', action: () => alert('Weather') },
+      { id: 'weather', icon: weatherOrbIcon, label: weatherOrbLabel, accentColor: '#fbbf24', glowColor: 'rgba(251, 191, 36, 0.4)', action: () => setIsWeatherOpen(true) },
       { id: 'calendar', icon: '📅', label: 'Feb 17', accentColor: '#38bdf8', glowColor: 'rgba(56, 189, 248, 0.4)', action: () => alert('Calendar') },
       { id: 'alerts', icon: '🔔', label: 'Alerts', accentColor: '#f87171', glowColor: 'rgba(248, 113, 113, 0.4)', action: () => alert('Notifications') }
     ],
@@ -57,6 +65,7 @@ export default function MainPage() {
   return (
     <main className="mainHubWrapper">
       <BubbleHub honeycombRows={honeycombRows} liveTime={liveTime} />
+      <WeatherModal isOpen={isWeatherOpen} onClose={() => setIsWeatherOpen(false)} />
     </main>
   )
 }
