@@ -1,0 +1,112 @@
+/* Weather Modal — reuses .modalBackdrop / .modalDialog / .modalCloseBtn etc.
+   from AuthModal.css, and only adds the weather-specific pieces below */
+
+.weatherDialog {
+  max-width: 380px;
+}
+
+.weatherStatusText {
+  text-align: center;
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 12px 0;
+}
+
+.weatherErrorBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.weatherHero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0 22px;
+  text-align: center;
+}
+
+.weatherHeroIcon {
+  font-size: 56px;
+  line-height: 1;
+  filter: drop-shadow(0 0 18px rgba(56, 189, 248, 0.35));
+  animation: weatherFloat 4s ease-in-out infinite;
+}
+
+@keyframes weatherFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.weatherHeroTemp {
+  font-family: var(--fontDisplay);
+  font-size: 44px;
+  font-weight: 700;
+  margin-top: 4px;
+  background: linear-gradient(135deg, #ffffff 0%, var(--cyanGlow) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.weatherHeroCondition {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.72);
+  margin-top: 2px;
+}
+
+.weatherStatGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.weatherStatCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 8px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  text-align: center;
+}
+
+.weatherStatLabel {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.weatherStatValue {
+  font-family: var(--fontDisplay);
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.weatherTipBanner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  font-size: 13.5px;
+  color: #ffffff;
+  margin-bottom: 18px;
+}
+
+.weatherTipIcon {
+  font-size: 18px;
+}
+
+.weatherNotifyRow {
+  display: flex;
+  flex-direction: column;
+}
