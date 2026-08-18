@@ -1,6 +1,6 @@
 # This file is like a "Waiter" who handles web addresses for posts
 from flask import Blueprint, jsonify, request
-from controllers.post_controller import create_post_logic, get_posts_logic
+from controllers.post_controller import create_post_logic, get_posts_logic, get_single_post_logic
 
 # Group our post-related API addresses together
 post_bp = Blueprint('post', __name__, url_prefix='/api')
@@ -65,3 +65,8 @@ def get_posts():
 
     # Turn the result into JSON format so React can read it
     return jsonify(result), 200
+
+@post_bp.route('/posts/<int:post_id>', methods=['GET'])
+def get_single_post(post_id):
+    result, status_code = get_single_post_logic(post_id)
+    return jsonify(result), status_code
