@@ -1,0 +1,28 @@
+.mapDialog {
+  max-width: 640px;
+}
+
+.mapModalBody {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.mapEmbedWrapper {
+  width: 100%;
+  height: 420px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.mapEmbedFrame {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.mapExternalBtn {
+  text-align: center;
+  text-decoration: none;
+}
