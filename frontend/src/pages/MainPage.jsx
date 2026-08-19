@@ -3,11 +3,13 @@ import BubbleHub from '../components/BubbleHub'
 import WeatherModal from '../components/WeatherModal'
 import CommunityModal from '../components/CommunityModal'
 import useWeather from '../hooks/useWeather'
+import MapModal from '../components/MapModal'
 import './MainPage.css'
 
 export default function MainPage({ loggedUser }) {
   const [liveTime, setLiveTime] = useState('')
   const [isWeatherOpen, setIsWeatherOpen] = useState(false)
+  const [isMapOpen, setIsMapOpen] = useState(false)
   const [communityView, setCommunityView] = useState(null)
   const { weather } = useWeather()
 
@@ -44,7 +46,7 @@ export default function MainPage({ loggedUser }) {
     // Row 3 (5 Orbs with Central Clock)
     [
       { id: 'study', icon: '📚', label: 'Study Squad', accentColor: '#2dd4bf', glowColor: 'rgba(45, 212, 191, 0.4)', action: () => alert('Study Squad') },
-      { id: 'map', icon: '🗺️', label: 'Campus Map', accentColor: '#38bdf8', glowColor: 'rgba(56, 189, 248, 0.45)', action: () => alert('Campus Map') },
+      { id: 'map', icon: '🗺️', label: 'Campus Map', accentColor: '#38bdf8', glowColor: 'rgba(56, 189, 248, 0.45)', action: () => setIsMapOpen(true) },
       { id: 'clock', isClock: true, label: 'Auckland', accentColor: '#ffffff', glowColor: 'rgba(255, 255, 255, 0.65)', action: () => alert('Clock') },
       { id: 'events', icon: '🎪', label: 'Events', accentColor: '#f472b6', glowColor: 'rgba(244, 114, 182, 0.4)', action: () => alert('Campus Events') },
       { id: 'library', icon: '📖', label: 'Library', accentColor: '#c084fc', glowColor: 'rgba(192, 132, 252, 0.4)', action: () => alert('Library') }
@@ -68,7 +70,8 @@ export default function MainPage({ loggedUser }) {
     <main className="mainHubWrapper">
       <BubbleHub honeycombRows={honeycombRows} liveTime={liveTime} />
       <WeatherModal isOpen={isWeatherOpen} onClose={() => setIsWeatherOpen(false)} />
-      <CommunityModal isOpen={communityView !== null} initialView={communityView || 'list'} onClose={() => setCommunityView(null)} currentUser={loggedUser}/>  
+      <CommunityModal isOpen={communityView !== null} initialView={communityView || 'list'} onClose={() => setCommunityView(null)} currentUser={loggedUser}/> 
+      <MapModal isOpen={isMapOpen} onClose={() => setIsMapOpen(false)} />
     </main>
   )
 }
