@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import BubbleHub from '../components/BubbleHub'
 import WeatherModal from '../components/WeatherModal'
 import CommunityModal from '../components/CommunityModal'
+import GroceryModal from '../components/GroceryModal'
 import useWeather from '../hooks/useWeather'
 import MapModal from '../components/MapModal'
 import './MainPage.css'
@@ -10,6 +11,7 @@ export default function MainPage({ loggedUser }) {
   const [liveTime, setLiveTime] = useState('')
   const [isWeatherOpen, setIsWeatherOpen] = useState(false)
   const [isMapOpen, setIsMapOpen] = useState(false)
+  const [isGroceryOpen, setIsGroceryOpen] = useState(false)
   const [communityView, setCommunityView] = useState(null)
   const { weather } = useWeather()
 
@@ -38,11 +40,11 @@ export default function MainPage({ loggedUser }) {
     ],
     // Row 2 (4 Orbs)
     [
-      { id: 'market', icon: '🛒', label: 'Perks', accentColor: '#fb7185', glowColor: 'rgba(251, 113, 133, 0.4)', action: () => alert('Perks Marketplace') },
+      { id: 'market', icon: '🛒', label: 'Groceries', accentColor: '#fb7185', glowColor: 'rgba(251, 113, 133, 0.4)', action: () => setIsGroceryOpen(true) },
       { id: 'quickAdd', icon: '➕', label: 'New Post', accentColor: '#a78bfa', glowColor: 'rgba(167, 139, 250, 0.4)', action: () => setCommunityView('new') },
       { id: 'community', icon: '💬', label: 'Community', accentColor: '#818cf8', glowColor: 'rgba(129, 140, 248, 0.4)', action: () => setCommunityView('list') },
       { id: 'shuttle', icon: '🚌', label: 'Shuttle', accentColor: '#fb923c', glowColor: 'rgba(251, 146, 60, 0.4)', action: () => alert('Shuttle Bus') }
-        ],
+    ],
     // Row 3 (5 Orbs with Central Clock)
     [
       { id: 'study', icon: '📚', label: 'Study Squad', accentColor: '#2dd4bf', glowColor: 'rgba(45, 212, 191, 0.4)', action: () => alert('Study Squad') },
@@ -72,6 +74,7 @@ export default function MainPage({ loggedUser }) {
       <WeatherModal isOpen={isWeatherOpen} onClose={() => setIsWeatherOpen(false)} />
       <CommunityModal isOpen={communityView !== null} initialView={communityView || 'list'} onClose={() => setCommunityView(null)} currentUser={loggedUser}/> 
       <MapModal isOpen={isMapOpen} onClose={() => setIsMapOpen(false)} />
+      <GroceryModal isOpen={isGroceryOpen} onClose={() => setIsGroceryOpen(false)} currentUser={loggedUser} />
     </main>
   )
 }
