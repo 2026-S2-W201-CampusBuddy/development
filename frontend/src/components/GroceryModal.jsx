@@ -47,7 +47,7 @@ export default function GroceryModal({ isOpen, onClose, currentUser }) {
 
   if (!isOpen) return null
 
-  const google_maps_api_key = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "AIzaSyAt3XW1T4o3fVDo5BpDdIQlb_K1lzHeGRA"
+  const google_maps_api_key = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
 
   // Build clean search query for Google Maps Embed API
   // If a store is selected, focus on that store. Otherwise, search supermarkets in the specific location.
