@@ -35,35 +35,17 @@ export async function getAucklandWeather() {
     return handleResponse(response)
 }
 
-export async function getPosts() {
-    const response = await fetch(`${BASE_URL}/api/posts`)
+export async function getRentAreas() {
+    const response = await fetch(`${BASE_URL}/api/rent/areas`)
     return handleResponse(response)
 }
 
-export async function getPost(postId) {
-    const response = await fetch(`${BASE_URL}/api/posts/${postId}`)
+export async function getRentForArea(areaId) {
+    const response = await fetch(`${BASE_URL}/api/rent/areas/${areaId}`)
     return handleResponse(response)
 }
 
-export async function createPost(title, content, author) {
-    const response = await fetch(`${BASE_URL}/api/posts`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, content, author }),
-  })
-    return handleResponse(response)
-}
-
-export async function getComments(postId) {
-    const response = await fetch(`${BASE_URL}/api/posts/${postId}/comments`)
-    return handleResponse(response)
-}
-
-export async function createComment(postId, content, author) {
-    const response = await fetch(`${BASE_URL}/api/posts/${postId}/comments`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content, author }),
-  })
+export async function getCheapestRentAreas() {
+    const response = await fetch(`${BASE_URL}/api/rent/cheapest`)
     return handleResponse(response)
 }
