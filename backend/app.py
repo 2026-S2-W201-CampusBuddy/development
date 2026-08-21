@@ -3,6 +3,10 @@ from flask import Flask
 from flask_cors import CORS
 from extensions import db
 from routes.weather_routes import weather_bp
+import os
+from dotenv import load_dotenv
+
+load_dotenv()  # This line loads variables from .env file into os.environ
 
 # Import the Waiter (Routes) we made
 from routes.api_routes import api_bp
