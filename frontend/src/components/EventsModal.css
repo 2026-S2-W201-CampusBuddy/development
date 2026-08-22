@@ -1,0 +1,21 @@
+/* Events Modal Specific Styles */
+
+.eventsDialog {
+  max-width: 460px;
+}
+
+.instagramSinglePost {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.instagramSinglePost .instagram-media {
+  width: 100% !important;
+  max-width: 400px !important;
+}
+
+.eventsExternalBtn {
+  text-align: center;
+  text-decoration: none;
+}
