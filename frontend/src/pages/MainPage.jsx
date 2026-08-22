@@ -1,15 +1,21 @@
 import { useState, useEffect } from 'react'
 import BubbleHub from '../components/BubbleHub'
 import WeatherModal from '../components/WeatherModal'
+import CommunityModal from '../components/CommunityModal'
 import RentModal from '../components/RentModal'
+import GroceryModal from '../components/GroceryModal'
+import MapModal from '../components/MapModal'
 import useWeather from '../hooks/useWeather'
 import useRent from '../hooks/useRent'
 import './MainPage.css'
 
-export default function MainPage() {
+export default function MainPage({ loggedUser }) {
   const [liveTime, setLiveTime] = useState('')
   const [isWeatherOpen, setIsWeatherOpen] = useState(false)
   const [isRentOpen, setIsRentOpen] = useState(false)
+  const [isGroceryOpen, setIsGroceryOpen] = useState(false)
+  const [isMapOpen, setIsMapOpen] = useState(false)
+  const [communityView, setCommunityView] = useState(null)
 
   // Fetched once here and shared with the modals via props below —
   // avoids calling these APIs twice (once for the orb, once for the modal)
@@ -42,15 +48,15 @@ export default function MainPage() {
     ],
     // Row 2 (4 Orbs)
     [
-      { id: 'market', icon: '🛒', label: 'Perks', accentColor: '#fb7185', glowColor: 'rgba(251, 113, 133, 0.4)', action: () => alert('Perks Marketplace') },
-      { id: 'quickAdd', icon: '➕', label: 'New Post', accentColor: '#a78bfa', glowColor: 'rgba(167, 139, 250, 0.4)', action: () => alert('Create Post') },
-      { id: 'community', icon: '💬', label: 'Community', accentColor: '#818cf8', glowColor: 'rgba(129, 140, 248, 0.4)', action: () => alert('Community Feed') },
+      { id: 'market', icon: '🛒', label: 'Perks', accentColor: '#fb7185', glowColor: 'rgba(251, 113, 133, 0.4)', action: () => setIsGroceryOpen(true) },
+      { id: 'quickAdd', icon: '➕', label: 'New Post', accentColor: '#a78bfa', glowColor: 'rgba(167, 139, 250, 0.4)', action: () => setCommunityView('new') },
+      { id: 'community', icon: '💬', label: 'Community', accentColor: '#818cf8', glowColor: 'rgba(129, 140, 248, 0.4)', action: () => setCommunityView('list') },
       { id: 'shuttle', icon: '🚌', label: 'Shuttle', accentColor: '#fb923c', glowColor: 'rgba(251, 146, 60, 0.4)', action: () => alert('Shuttle Bus') }
     ],
     // Row 3 (5 Orbs with Central Clock)
     [
       { id: 'study', icon: '📚', label: 'Study Squad', accentColor: '#2dd4bf', glowColor: 'rgba(45, 212, 191, 0.4)', action: () => alert('Study Squad') },
-      { id: 'map', icon: '🗺️', label: 'Campus Map', accentColor: '#38bdf8', glowColor: 'rgba(56, 189, 248, 0.45)', action: () => alert('Campus Map') },
+      { id: 'map', icon: '🗺️', label: 'Campus Map', accentColor: '#38bdf8', glowColor: 'rgba(56, 189, 248, 0.45)', action: () => setIsMapOpen(true) },
       { id: 'clock', isClock: true, label: 'Auckland', accentColor: '#ffffff', glowColor: 'rgba(255, 255, 255, 0.65)', action: () => alert('Clock') },
       { id: 'events', icon: '🎪', label: 'Events', accentColor: '#f472b6', glowColor: 'rgba(244, 114, 182, 0.4)', action: () => alert('Campus Events') },
       { id: 'library', icon: '📖', label: 'Library', accentColor: '#c084fc', glowColor: 'rgba(192, 132, 252, 0.4)', action: () => alert('Library') }
@@ -73,15 +79,35 @@ export default function MainPage() {
   return (
     <main className="mainHubWrapper">
       <BubbleHub honeycombRows={honeycombRows} liveTime={liveTime} />
+
       <WeatherModal
         isOpen={isWeatherOpen}
         onClose={() => setIsWeatherOpen(false)}
         {...weatherState}
       />
+
+      <CommunityModal
+        isOpen={communityView !== null}
+        initialView={communityView || 'list'}
+        onClose={() => setCommunityView(null)}
+        currentUser={loggedUser}
+      />
+
       <RentModal
         isOpen={isRentOpen}
         onClose={() => setIsRentOpen(false)}
         {...rentState}
+      />
+
+      <GroceryModal
+        isOpen={isGroceryOpen}
+        onClose={() => setIsGroceryOpen(false)}
+        currentUser={loggedUser}
+      />
+
+      <MapModal
+        isOpen={isMapOpen}
+        onClose={() => setIsMapOpen(false)}
       />
     </main>
   )
