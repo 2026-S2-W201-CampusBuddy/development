@@ -8,28 +8,6 @@ async function handleResponse(response) {
     return data
 }
 
-export async function registerUser(username, password) {
-    const response = await fetch(`${BASE_URL}/api/register`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-    })
-    return handleResponse(response)
-}
-
-export async function loginUser(username, password) {
-    const response = await fetch(`${BASE_URL}/api/login`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-    })
-    return handleResponse(response)
-}
-
 export async function getAucklandWeather() {
     const response = await fetch(`${BASE_URL}/api/weather/auckland`)
     return handleResponse(response)
@@ -66,4 +44,31 @@ export async function createComment(postId, content, author) {
         body: JSON.stringify({ content, author }),
   })
     return handleResponse(response)
+}
+
+export async function registerUser(username, email, password) {
+  const response = await fetch(`${BASE_URL}/api/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, email, password }),
+  })
+  return handleResponse(response)
+}
+
+export async function verifyEmail(email, code) {
+  const response = await fetch(`${BASE_URL}/api/verify-email`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, code }),
+  })
+  return handleResponse(response)
+}
+
+export async function loginUser(email, password) {
+  const response = await fetch(`${BASE_URL}/api/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  })
+  return handleResponse(response)
 }
