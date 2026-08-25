@@ -13,6 +13,21 @@ export async function getAucklandWeather() {
     return handleResponse(response)
 }
 
+export async function getRentAreas() {
+    const response = await fetch(`${BASE_URL}/api/rent/areas`)
+    return handleResponse(response)
+}
+
+export async function getRentForArea(areaId) {
+    const response = await fetch(`${BASE_URL}/api/rent/areas/${areaId}`)
+    return handleResponse(response)
+}
+
+export async function getCheapestRentAreas() {
+    const response = await fetch(`${BASE_URL}/api/rent/cheapest`)
+    return handleResponse(response)
+}
+
 export async function getPosts() {
     const response = await fetch(`${BASE_URL}/api/posts`)
     return handleResponse(response)

@@ -3,6 +3,7 @@ from flask import Flask
 from flask_cors import CORS
 from extensions import db
 from routes.weather_routes import weather_bp
+from routes.rent_routes import rent_bp
 import os
 from dotenv import load_dotenv
 
@@ -31,6 +32,7 @@ app.register_blueprint(post_bp)
 app.register_blueprint(comment_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(weather_bp)
+app.register_blueprint(rent_bp)
 
 # Create the database file/tabcles if they don't already exist
 with app.app_context():

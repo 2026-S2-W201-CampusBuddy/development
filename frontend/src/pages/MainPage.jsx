@@ -3,7 +3,9 @@ import BubbleHub from '../components/BubbleHub'
 import WeatherModal from '../components/WeatherModal'
 import CommunityModal from '../components/CommunityModal'
 import GroceryModal from '../components/GroceryModal'
+import RentModal from '../components/RentModal'
 import useWeather from '../hooks/useWeather'
+import useRent from '../hooks/useRent'
 import MapModal from '../components/MapModal'
 import EventsModal from '../components/EventsModal'
 import './MainPage.css'
@@ -14,8 +16,14 @@ export default function MainPage({ loggedUser }) {
   const [isMapOpen, setIsMapOpen] = useState(false)
   const [isGroceryOpen, setIsGroceryOpen] = useState(false)
   const [isEventsOpen, setIsEventsOpen] = useState(false)
+  const [isRentOpen, setIsRentOpen] = useState(false)
   const [communityView, setCommunityView] = useState(null)
-  const { weather } = useWeather()
+
+  // Fetched once here and shared with their modals via props below —
+  // avoids calling these APIs twice (once for the orb, once for the modal)
+  const weatherState = useWeather()
+  const { weather } = weatherState
+  const rentState = useRent()
 
   useEffect(() => {
     const updateTime = () => {
@@ -57,7 +65,7 @@ export default function MainPage({ loggedUser }) {
     ],
     // Row 4 (4 Orbs)
     [
-      { id: 'radio', icon: '🎧', label: 'Campus FM', accentColor: '#ec4899', glowColor: 'rgba(236, 72, 153, 0.4)', action: () => alert('Campus Radio') },
+      { id: 'radio', icon: '🏠', label: 'Rentals', accentColor: '#ec4899', glowColor: 'rgba(236, 72, 153, 0.4)', action: () => setIsRentOpen(true) },
       { id: 'wellness', icon: '🏃', label: 'Wellness', accentColor: '#10b981', glowColor: 'rgba(16, 185, 129, 0.4)', action: () => alert('Wellness') },
       { id: 'food', icon: '🍽️', label: 'Food Deals', accentColor: '#f59e0b', glowColor: 'rgba(245, 158, 11, 0.4)', action: () => alert('Food Deals') },
       { id: 'messages', icon: '💌', label: 'Inbox', accentColor: '#6366f1', glowColor: 'rgba(99, 102, 241, 0.4)', action: () => alert('Direct Messages') }
@@ -73,11 +81,20 @@ export default function MainPage({ loggedUser }) {
   return (
     <main className="mainHubWrapper">
       <BubbleHub honeycombRows={honeycombRows} liveTime={liveTime} />
-      <WeatherModal isOpen={isWeatherOpen} onClose={() => setIsWeatherOpen(false)} />
+      <WeatherModal
+        isOpen={isWeatherOpen}
+        onClose={() => setIsWeatherOpen(false)}
+        {...weatherState}
+      />
       <CommunityModal isOpen={communityView !== null} initialView={communityView || 'list'} onClose={() => setCommunityView(null)} currentUser={loggedUser}/> 
       <MapModal isOpen={isMapOpen} onClose={() => setIsMapOpen(false)} />
       <GroceryModal isOpen={isGroceryOpen} onClose={() => setIsGroceryOpen(false)} currentUser={loggedUser} />
       <EventsModal isOpen={isEventsOpen} onClose={() => setIsEventsOpen(false)} />
+      <RentModal
+        isOpen={isRentOpen}
+        onClose={() => setIsRentOpen(false)}
+        {...rentState}
+      />
     </main>
   )
 }
