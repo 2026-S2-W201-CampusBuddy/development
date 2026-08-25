@@ -7,6 +7,9 @@ def generate_code():
     return str(random.randint(100000, 999999))
 
 def register_logic(username, email, password):
+    if not email.lower().endswith('@autuni.ac.nz'):
+        return {"status": "error", "message": "You must sign up with an AUT student email (@autuni.ac.nz)"}, 400
+
     if User.find_by_username(username):
         return {"status": "error", "message": "Username already exists"}, 400
 
