@@ -4,6 +4,20 @@
 
 .rentDialog {
   max-width: 440px;
+  max-height: 88vh;
+  overflow-y: auto;
+  /* keep the scrollbar from sitting flush against rounded content */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+
+.rentDialog::-webkit-scrollbar {
+  width: 6px;
+}
+
+.rentDialog::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
 }
 
 .rentDataBadge {
