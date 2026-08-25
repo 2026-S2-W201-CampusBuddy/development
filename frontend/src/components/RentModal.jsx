@@ -28,7 +28,7 @@ export default function RentModal({
 
         {!isLiveData && (
           <div className="rentDataBadge">
-            📊 Estimated figures — live Tenancy Services API access is pending approval
+            📊 Estimated figures, modelled on Tenancy Services rent statistics
           </div>
         )}
 
