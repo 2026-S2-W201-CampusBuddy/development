@@ -40,7 +40,7 @@ def get_groceries():
                     "name": place.get('name'),
                     "address": place.get('formatted_address'),
                     "price_tier": "$$ (Moderate)",
-                    "rating": place.get('rating', 'N/A'), # 평점 추가 (없으면 N/A)
+                    "rating": place.get('rating', 'N/A'),
                     "geometry": place.get('geometry', {}).get('location', {})
                 })
         
