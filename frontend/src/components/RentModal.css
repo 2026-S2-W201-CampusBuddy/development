@@ -1,0 +1,149 @@
+/* Rent Modal — reuses .modalBackdrop / .modalDialog / .modalCloseBtn /
+   .weatherStatusText / .weatherTipBanner from AuthModal.css and
+   WeatherModal.css, and only adds the rent-specific pieces below */
+
+.rentDialog {
+  max-width: 440px;
+}
+
+.rentDataBadge {
+  font-size: 12px;
+  text-align: center;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 16px;
+}
+
+.rentSectionLabel {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 8px;
+}
+
+.rentRankingSection {
+  margin-bottom: 18px;
+}
+
+.rentRankingList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rentRankingChip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  font-family: inherit;
+  text-align: left;
+}
+
+.rentRankingChip:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.rentRankingChipActive {
+  background: rgba(45, 212, 191, 0.14);
+  border-color: rgba(45, 212, 191, 0.4);
+}
+
+.rentRankingIndex {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.rentRankingLabel {
+  flex: 1;
+  font-size: 13.5px;
+}
+
+.rentRankingPrice {
+  font-family: var(--fontDisplay);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #2dd4bf;
+}
+
+.rentAreaSelectRow {
+  margin-bottom: 16px;
+}
+
+.rentAreaSelect {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--glassBorder);
+  color: #ffffff;
+  font-size: 13.5px;
+  font-family: inherit;
+}
+
+.rentAreaSelect option {
+  background: #0f172a;
+  color: #ffffff;
+}
+
+.rentTableWrap {
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  margin-bottom: 10px;
+}
+
+.rentTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+.rentTable th {
+  text-align: left;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+.rentTable td {
+  padding: 8px 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.rentTableMedian {
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.rentPeriodNote {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+  text-align: right;
+  margin-bottom: 16px;
+}

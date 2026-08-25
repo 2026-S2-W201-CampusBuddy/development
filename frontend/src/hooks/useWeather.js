@@ -10,6 +10,16 @@ function todayKey() {
   return new Date().toDateString()
 }
 
+// Picks a greeting based on what time of day the user actually opened
+// the app — since we notify "on open" rather than at a fixed clock time,
+// this keeps the message feeling natural no matter when that happens
+function getGreeting() {
+  const hour = new Date().getHours()
+  if (hour < 11) return 'Good morning'
+  if (hour < 17) return 'Hey'
+  return 'Good evening'
+}
+
 export default function useWeather() {
   const [weather, setWeather] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -31,7 +41,7 @@ export default function useWeather() {
     const alreadyNotifiedToday = localStorage.getItem(NOTIFY_DATE_KEY) === todayKey()
     if (alreadyNotifiedToday) return
 
-    const notification = new Notification('CampusBuddy — Your Auckland Morning', {
+    const notification = new Notification(`${getGreeting()} — Your Auckland Forecast`, {
       body: `${data.icon} ${data.condition}, ${data.today_min}°–${data.today_max}°C. ${data.clothing_tip}.`,
       icon: '/favicon.svg',
       tag: 'campusbuddy-weather', // replaces any previous weather notification instead of stacking

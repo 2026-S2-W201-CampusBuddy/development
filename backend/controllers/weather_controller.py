@@ -1,4 +1,5 @@
 # This file is like a "Chef" — it turns raw weather data into something useful
+import random
 from models.weather_model import WeatherModel
 
 # Weather codes from Open-Meteo (WMO standard), simplified into plain English
@@ -36,21 +37,49 @@ def get_weather_icon(code):
     else:
         return "🌡️"
 
-# Turns weather data into a clothing suggestion
-def suggest_clothing(temp_max, rain_chance):
-    suggestion = []
+# Turns weather data into a clothing suggestion. Several phrasings are
+# kept per temperature band so the tip doesn't say the exact same thing
+# every single day, even on days with similar weather.
+COLD_TIPS = [
+    "Wear a warm jacket",
+    "Rug up — it's cold out there",
+    "Layer up with something warm",
+    "A heavy coat is a good idea today",
+]
 
+MILD_TIPS = [
+    "Bring a light jacket",
+    "A hoodie or cardigan should do the trick",
+    "Light layers are your friend today",
+    "Grab a jumper just in case",
+]
+
+WARM_TIPS = [
+    "Light clothing is fine",
+    "T-shirt weather — enjoy it",
+    "No need for a jacket today",
+    "Dress light, it's a warm one",
+]
+
+RAIN_TIPS = [
+    "bring an umbrella",
+    "don't forget a raincoat",
+    "pack something waterproof",
+    "an umbrella will save your day",
+]
+
+def suggest_clothing(temp_max, rain_chance):
     if temp_max < 12:
-        suggestion.append("wear a warm jacket")
+        base = random.choice(COLD_TIPS)
     elif temp_max < 18:
-        suggestion.append("bring a light jacket")
+        base = random.choice(MILD_TIPS)
     else:
-        suggestion.append("light clothing is fine")
+        base = random.choice(WARM_TIPS)
 
     if rain_chance >= 50:
-        suggestion.append("bring an umbrella")
+        return f"{base}, and {random.choice(RAIN_TIPS)}"
 
-    return ", ".join(suggestion).capitalize()
+    return base
 
 def get_auckland_weather_logic():
     forecast = WeatherModel.get_auckland_forecast()
