@@ -31,6 +31,12 @@ export default function AuthModal({ authMode, onClose, onAuthSuccess, onSwitchMo
   const handleFormSubmit = async (e) => {
     e.preventDefault()
     setError('')
+
+    if (authMode === 'signup' && !email.toLowerCase().endsWith('@autuni.ac.nz')) {
+      setError('You must sign up with an AUT student email (@autuni.ac.nz)')
+      return
+    }
+
     setIsSubmitting(true)
 
     try {
