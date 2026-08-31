@@ -25,6 +25,7 @@ export default function MainPage({ loggedUser }) {
     category: 'general',
   })
 
+  // Fetched once here and shared with their modals via props below
   const weatherState = useWeather()
   const { weather } = weatherState
   const rentState = useRent()
@@ -78,12 +79,12 @@ export default function MainPage({ loggedUser }) {
       { id: 'map', icon: '🗺️', label: 'Campus Map', accentColor: '#38bdf8', glowColor: 'rgba(56, 189, 248, 0.45)', action: () => setIsMapOpen(true) },
       { id: 'clock', isClock: true, label: 'Auckland', accentColor: '#ffffff', glowColor: 'rgba(255, 255, 255, 0.65)', action: () => alert('Clock') },
       { id: 'events', icon: '🎪', label: 'Events', accentColor: '#f472b6', glowColor: 'rgba(244, 114, 182, 0.4)', action: () => setIsEventsOpen(true) },
-      { id: 'library', icon: '📖', label: 'Library', accentColor: '#c084fc', glowColor: 'rgba(192, 132, 252, 0.4)', action: () => alert('Library') }
+      // Changed Library to Travelling orb (Opens Community with 'travelling' category)
+      { id: 'travelling', icon: '✈️', label: 'Travelling', accentColor: '#38bdf8', glowColor: 'rgba(56, 189, 248, 0.4)', action: () => openCommunityModal('travelling', 'list') }
     ],
     // Row 4 (4 Orbs)
     [
       { id: 'radio', icon: '🏠', label: 'Rentals', accentColor: '#ec4899', glowColor: 'rgba(236, 72, 153, 0.4)', action: () => setIsRentOpen(true) },
-      // Wellness orb now opens Community with 'wellness' category
       { id: 'wellness', icon: '🏃', label: 'Wellness', accentColor: '#10b981', glowColor: 'rgba(16, 185, 129, 0.4)', action: () => openCommunityModal('wellness', 'list') },
       { id: 'food', icon: '🍽️', label: 'Eatery', accentColor: '#f59e0b', glowColor: 'rgba(245, 158, 11, 0.4)', action: () => openCommunityModal('food', 'list') },
       { id: 'messages', icon: '💌', label: 'Inbox', accentColor: '#6366f1', glowColor: 'rgba(99, 102, 241, 0.4)', action: () => alert('Direct Messages') }
