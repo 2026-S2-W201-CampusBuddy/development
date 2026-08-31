@@ -1,125 +1,759 @@
-.communityStatusText {
-  text-align: center;
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.7);
-  padding: 12px 0;
-}
+/* ==========================================================================
+   1. Dialog Container & Main Layout
+   ========================================================================== */
 
-.communityErrorBlock {
+/* Main dialog sizing and backdrop blur */
+.communityDialog {
+  width: 92%;
+  max-width: 760px;
+  height: 640px;
+  max-height: 90vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  margin: auto 0;
+  background: rgba(18, 20, 29, 0.82) !important;
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55), 0 0 1px rgba(255, 255, 255, 0.2) inset !important;
+  border-radius: 24px !important;
+  overflow: hidden;
 }
 
-.communityNewPostBtn {
+/* Inner body container */
+.communityModalBody {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 8px 10px 4px 10px;
+  overflow: hidden;
+  justify-content: flex-start !important;
+}
+
+.communityHeader {
   margin-bottom: 16px;
+  text-align: left;
 }
 
+.detailHeader {
+  margin-bottom: 14px;
+}
+
+/* Back link navigation button */
 .communityBackLink {
   background: none;
   border: none;
   color: rgba(255, 255, 255, 0.65);
   font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
   padding: 0 0 10px 0;
-  text-align: left;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.15s ease;
 }
 
 .communityBackLink:hover {
   color: #ffffff;
 }
 
+/* ==========================================================================
+   2. Toolbar & Category Navigation
+   ========================================================================== */
+
+/* Action toolbar containing category tabs and create post button */
+.communityToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 4px;
+}
+
+/* Scrollable category pills bar */
+.communityCategoryTabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 2px;
+  scrollbar-width: none;
+}
+
+.communityCategoryTabs::-webkit-scrollbar {
+  display: none;
+}
+
+/* Category tab item */
+.categoryTabBtn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+  padding: 7px 15px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.categoryTabBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.categoryTabBtn.active {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* Header write new post button */
+.communityWriteBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   3. Post List Feed & Cards
+   ========================================================================== */
+
+/* Feed container */
 .communityPostList {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  max-height: 360px;
+  gap: 12px;
+  flex: 1;
   overflow-y: auto;
+  padding-right: 6px;
+  margin-top: 4px;
 }
 
+/* Custom scrollbars */
+.communityPostList::-webkit-scrollbar,
+.communityCommentList::-webkit-scrollbar,
+.postDetailContainer::-webkit-scrollbar {
+  width: 5px;
+}
+
+.communityPostList::-webkit-scrollbar-track,
+.communityCommentList::-webkit-scrollbar-track,
+.postDetailContainer::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.communityPostList::-webkit-scrollbar-thumb,
+.communityCommentList::-webkit-scrollbar-thumb,
+.postDetailContainer::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+}
+
+/* Post card item */
 .communityPostCard {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
-  padding: 14px 16px;
+  gap: 6px;
+  padding: 16px 18px;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   text-align: left;
   cursor: pointer;
-  color: #ffffff;
-  font-family: inherit;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
 .communityPostCard:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.postCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+
+.postAuthorGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Author circle initial avatar */
+.authorAvatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.08));
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.authorAvatar.small {
+  width: 22px;
+  height: 22px;
+  font-size: 10px;
+}
+
+.authorAvatar.xsmall {
+  width: 20px;
+  height: 20px;
+  font-size: 9px;
+}
+
+.postAuthorName {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.postTimeAgo {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.commentTimeAgo {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-left: 4px;
 }
 
 .communityPostTitle {
-  font-family: var(--fontDisplay);
-  font-size: 15.5px;
+  font-family: inherit;
+  font-size: 16px;
   font-weight: 600;
-}
-
-.communityPostMeta {
-  font-size: 11.5px;
-  color: rgba(255, 255, 255, 0.55);
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.35;
 }
 
 .communityPostPreview {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.75);
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.5;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  margin: 0;
+}
+
+/* ==========================================================================
+   4. Empty & Loading States
+   ========================================================================== */
+
+.communityEmptyBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: auto 0;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.emptyIcon {
+  font-size: 34px;
+  margin-bottom: 4px;
+}
+
+.emptyTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+.emptySubtitle {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.55);
+  max-width: 280px;
+  margin: 0 0 10px 0;
+}
+
+.communityStatusText {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+}
+
+.communitySpinner {
+  width: 26px;
+  height: 26px;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+  margin-bottom: 6px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.btnSmall {
+  padding: 6px 14px;
+  font-size: 12px;
+}
+
+/* ==========================================================================
+   5. Post Detail View
+   ========================================================================== */
+
+.postDetailContainer {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
 .communityPostDetail {
-  padding-bottom: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
-  margin-bottom: 14px;
+  padding: 16px 18px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  margin-bottom: 16px;
+}
+
+.postDetailMetaBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.postCategoryBadge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .communityPostDetailTitle {
-  font-family: var(--fontDisplay);
-  font-size: 19px;
-  margin-bottom: 4px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 8px 0;
+  line-height: 1.35;
 }
 
 .communityPostDetailContent {
   font-size: 14px;
+  line-height: 1.6;
   color: rgba(255, 255, 255, 0.85);
-  margin-top: 10px;
+  margin: 0;
   white-space: pre-wrap;
+}
+
+/* ==========================================================================
+   6. Threaded Comments & Replies
+   ========================================================================== */
+
+.communityCommentsSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+
+.commentsHeaderTitle {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 10px 0;
+  text-align: left;
 }
 
 .communityCommentList {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  max-height: 200px;
+  gap: 8px;
+  max-height: 180px;
   overflow-y: auto;
-  margin-bottom: 14px;
+  padding-right: 4px;
 }
 
+.noRepliesText {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.45);
+  text-align: center;
+  padding: 16px 0;
+}
+
+/* Thread block wrapper */
+.commentThreadBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Unified comment card */
 .communityCommentCard {
-  padding: 10px 14px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 11px 15px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: left;
+  box-sizing: border-box;
+}
+
+.commentHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.commentAuthorGroup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.commentAuthorName {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.commentReplyBtn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11.5px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+
+.commentReplyBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+/* 1-level nested replies container with thread line */
+.nestedRepliesContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-left: 20px;
+  padding-left: 10px;
+  border-left: 2px solid rgba(255, 255, 255, 0.12);
+}
+
+.replyCard {
+  background: rgba(255, 255, 255, 0.025) !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+.replyAvatar {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.4), rgba(56, 189, 248, 0.15)) !important;
+}
+
+.replyMentionTag {
+  display: inline-block;
+  color: #38bdf8;
+  font-weight: 600;
+  font-size: 12.5px;
+  margin-right: 6px;
+  background: rgba(56, 189, 248, 0.12);
+  padding: 1px 6px;
+  border-radius: 4px;
 }
 
 .communityCommentContent {
   font-size: 13.5px;
-  color: rgba(255, 255, 255, 0.85);
-  margin-top: 4px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.88);
+  margin: 0;
+  padding-left: 28px;
+  word-break: break-word;
+}
+
+/* ==========================================================================
+   7. Comment Reply Input Form
+   ========================================================================== */
+
+.communityReplyForm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 6px;
+}
+
+.replyingToBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  color: #e0f2fe;
+  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 8px;
+  margin-bottom: 2px;
+}
+
+.cancelReplyBtn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.cancelReplyBtn:hover {
+  color: #ffffff;
 }
 
 .communityCommentInput {
-  min-height: 80px;
+  min-height: 65px;
+  resize: none;
+  font-size: 13.5px;
+  border-radius: 12px;
+}
+
+.replySubmitBtn {
+  align-self: flex-end;
+  padding: 6px 18px;
+  font-size: 13px;
+}
+
+/* ==========================================================================
+   8. New Post Form
+   ========================================================================== */
+
+.newPostForm {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+  text-align: left;
+}
+
+.communitySelect {
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+}
+
+.communitySelect option {
+  background: #191b26;
+  color: #ffffff;
+}
+
+.communityNewPostTextarea {
+  min-height: 140px;
   resize: vertical;
+  line-height: 1.5;
+  border-radius: 12px;
+}
+
+.postSubmitBtn {
+  margin-top: 8px;
+  padding: 12px;
+  font-weight: 600;
+}
+
+/* Post Header Meta Left Group */
+.postDetailMetaLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.postDetailMetaBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+/* Edit & Delete Action Buttons */
+.authorActionButtons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cardActionBtn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 11.5px;
+  font-weight: 500;
+  padding: 4px 9px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cardActionBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.cardActionBtn.deleteBtn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+}
+
+/* Comment Actions Group */
+.commentActionsGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.commentActionBtn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.commentActionBtn:hover {
+  color: #ffffff;
+}
+
+.commentActionBtn.deleteText:hover {
+  color: #fca5a5;
+}
+
+/* Inline Edit Forms */
+.inlineEditForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.inlineEditInput {
+  font-size: 15px;
+  padding: 8px 12px;
+}
+
+.inlineEditTextarea {
+  min-height: 80px;
+  font-size: 13.5px;
+}
+
+.inlineEditActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.inlineCommentEditBox {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+  padding-left: 26px;
+}
+
+.inlineCommentEditTextarea {
+  min-height: 55px;
+  font-size: 13px;
+}
+
+/* Inline Delete Confirmation Styles */
+.inlineConfirmGroup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.confirmLabel {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #fca5a5;
+  margin-right: 2px;
+}
+
+.deleteConfirmBtn {
+  background: rgba(239, 68, 68, 0.25) !important;
+  border-color: rgba(239, 68, 68, 0.5) !important;
+  color: #fca5a5 !important;
+}
+
+.deleteConfirmBtn:hover {
+  background: rgba(239, 68, 68, 0.4) !important;
+  color: #ffffff !important;
+}
+
+/* Comment inline delete confirmation */
+.inlineCommentConfirm {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.commentConfirmBtn {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.commentConfirmBtn.yes {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+}
+
+.commentConfirmBtn.yes:hover {
+  background: rgba(239, 68, 68, 0.4);
+  color: #ffffff;
+}
+
+.commentConfirmBtn.no {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.commentConfirmBtn.no:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
 }
