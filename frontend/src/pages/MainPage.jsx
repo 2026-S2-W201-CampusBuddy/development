@@ -17,10 +17,14 @@ export default function MainPage({ loggedUser }) {
   const [isGroceryOpen, setIsGroceryOpen] = useState(false)
   const [isEventsOpen, setIsEventsOpen] = useState(false)
   const [isRentOpen, setIsRentOpen] = useState(false)
-  const [communityView, setCommunityView] = useState(null)
 
-  // Fetched once here and shared with their modals via props below —
-  // avoids calling these APIs twice (once for the orb, once for the modal)
+  // Community modal configuration state
+  const [communityState, setCommunityState] = useState({
+    isOpen: false,
+    view: 'list',
+    category: 'general',
+  })
+
   const weatherState = useWeather()
   const { weather } = weatherState
   const rentState = useRent()
@@ -37,7 +41,20 @@ export default function MainPage({ loggedUser }) {
     return () => clearInterval(timer)
   }, [])
 
-  // Falls back to a placeholder while the real forecast is still loading
+  // Helper function to open Community modal with target category and view
+  const openCommunityModal = (category = 'general', view = 'list') => {
+    setCommunityState({
+      isOpen: true,
+      view: view,
+      category: category,
+    })
+  }
+
+  // Helper function to close Community modal
+  const closeCommunityModal = () => {
+    setCommunityState((prev) => ({ ...prev, isOpen: false }))
+  }
+
   const weatherOrbIcon = weather ? weather.icon : '⛅'
   const weatherOrbLabel = weather ? `${Math.round(weather.current_temp)}°C AKL` : 'Loading...'
 
@@ -51,13 +68,13 @@ export default function MainPage({ loggedUser }) {
     // Row 2 (4 Orbs)
     [
       { id: 'market', icon: '🛒', label: 'Groceries', accentColor: '#fb7185', glowColor: 'rgba(251, 113, 133, 0.4)', action: () => setIsGroceryOpen(true) },
-      { id: 'quickAdd', icon: '➕', label: 'New Post', accentColor: '#a78bfa', glowColor: 'rgba(167, 139, 250, 0.4)', action: () => setCommunityView('new') },
-      { id: 'community', icon: '💬', label: 'Community', accentColor: '#818cf8', glowColor: 'rgba(129, 140, 248, 0.4)', action: () => setCommunityView('list') },
+      { id: 'quickAdd', icon: '➕', label: 'New Post', accentColor: '#a78bfa', glowColor: 'rgba(167, 139, 250, 0.4)', action: () => openCommunityModal('general', 'new') },
+      { id: 'community', icon: '💬', label: 'Community', accentColor: '#818cf8', glowColor: 'rgba(129, 140, 248, 0.4)', action: () => openCommunityModal('general', 'list') },
       { id: 'shuttle', icon: '🚌', label: 'Shuttle', accentColor: '#fb923c', glowColor: 'rgba(251, 146, 60, 0.4)', action: () => alert('Shuttle Bus') }
     ],
     // Row 3 (5 Orbs with Central Clock)
     [
-      { id: 'study', icon: '📚', label: 'Study Squad', accentColor: '#2dd4bf', glowColor: 'rgba(45, 212, 191, 0.4)', action: () => alert('Study Squad') },
+      { id: 'study', icon: '📚', label: 'Study Squad', accentColor: '#2dd4bf', glowColor: 'rgba(45, 212, 191, 0.4)', action: () => openCommunityModal('study', 'list') },
       { id: 'map', icon: '🗺️', label: 'Campus Map', accentColor: '#38bdf8', glowColor: 'rgba(56, 189, 248, 0.45)', action: () => setIsMapOpen(true) },
       { id: 'clock', isClock: true, label: 'Auckland', accentColor: '#ffffff', glowColor: 'rgba(255, 255, 255, 0.65)', action: () => alert('Clock') },
       { id: 'events', icon: '🎪', label: 'Events', accentColor: '#f472b6', glowColor: 'rgba(244, 114, 182, 0.4)', action: () => setIsEventsOpen(true) },
@@ -66,8 +83,9 @@ export default function MainPage({ loggedUser }) {
     // Row 4 (4 Orbs)
     [
       { id: 'radio', icon: '🏠', label: 'Rentals', accentColor: '#ec4899', glowColor: 'rgba(236, 72, 153, 0.4)', action: () => setIsRentOpen(true) },
-      { id: 'wellness', icon: '🏃', label: 'Wellness', accentColor: '#10b981', glowColor: 'rgba(16, 185, 129, 0.4)', action: () => alert('Wellness') },
-      { id: 'food', icon: '🍽️', label: 'Food Deals', accentColor: '#f59e0b', glowColor: 'rgba(245, 158, 11, 0.4)', action: () => alert('Food Deals') },
+      // Wellness orb now opens Community with 'wellness' category
+      { id: 'wellness', icon: '🏃', label: 'Wellness', accentColor: '#10b981', glowColor: 'rgba(16, 185, 129, 0.4)', action: () => openCommunityModal('wellness', 'list') },
+      { id: 'food', icon: '🍽️', label: 'Eatery', accentColor: '#f59e0b', glowColor: 'rgba(245, 158, 11, 0.4)', action: () => openCommunityModal('food', 'list') },
       { id: 'messages', icon: '💌', label: 'Inbox', accentColor: '#6366f1', glowColor: 'rgba(99, 102, 241, 0.4)', action: () => alert('Direct Messages') }
     ],
     // Row 5 (3 Orbs)
@@ -86,7 +104,13 @@ export default function MainPage({ loggedUser }) {
         onClose={() => setIsWeatherOpen(false)}
         {...weatherState}
       />
-      <CommunityModal isOpen={communityView !== null} initialView={communityView || 'list'} onClose={() => setCommunityView(null)} currentUser={loggedUser}/> 
+      <CommunityModal
+        isOpen={communityState.isOpen}
+        initialView={communityState.view}
+        initialCategory={communityState.category}
+        onClose={closeCommunityModal}
+        currentUser={loggedUser}
+      /> 
       <MapModal isOpen={isMapOpen} onClose={() => setIsMapOpen(false)} />
       <GroceryModal isOpen={isGroceryOpen} onClose={() => setIsGroceryOpen(false)} currentUser={loggedUser} />
       <EventsModal isOpen={isEventsOpen} onClose={() => setIsEventsOpen(false)} />
