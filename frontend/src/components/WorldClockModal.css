@@ -1,0 +1,212 @@
+/* World Clock Modal — reuses .modalBackdrop / .modalDialog / .modalCloseBtn /
+   .weatherStatusText / .rentSectionLabel / .btnGlass from the shared modal
+   styles, and only adds the world-clock-specific pieces below */
+
+.worldClockDialog {
+  max-width: 420px;
+  max-height: 88vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+
+.worldClockDialog::-webkit-scrollbar {
+  width: 6px;
+}
+
+.worldClockDialog::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+}
+
+.wcAucklandCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.16), rgba(192, 132, 252, 0.12));
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  margin-bottom: 16px;
+}
+
+.wcAucklandLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.wcPinIcon {
+  font-size: 14px;
+}
+
+.wcAucklandTime {
+  font-family: var(--fontDisplay);
+  font-size: 26px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.wcCityList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.wcCityRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.wcCityInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.wcCityLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wcDayOffset {
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(251, 191, 36, 0.18);
+  color: #fbbf24;
+  font-weight: 700;
+}
+
+.wcCityCountry {
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.wcCityRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wcCityTime {
+  font-family: var(--fontDisplay);
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+  min-width: 62px;
+  text-align: right;
+}
+
+.wcCallNote {
+  font-size: 10.5px;
+  padding: 3px 8px;
+  border-radius: 8px;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.wcCallNote-good {
+  background: rgba(45, 212, 191, 0.16);
+  color: #2dd4bf;
+}
+
+.wcCallNote-ok {
+  background: rgba(251, 191, 36, 0.16);
+  color: #fbbf24;
+}
+
+.wcCallNote-poor {
+  background: rgba(248, 113, 113, 0.16);
+  color: #f87171;
+}
+
+.wcRemoveBtn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  transition: color 0.15s ease;
+}
+
+.wcRemoveBtn:hover {
+  color: #f87171;
+}
+
+.wcPicker {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.wcSearchInput {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--glassBorder);
+  color: #ffffff;
+  font-size: 13.5px;
+  font-family: inherit;
+}
+
+.wcSearchInput::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.wcSearchInput:focus {
+  outline: none;
+  border-color: rgba(56, 189, 248, 0.5);
+}
+
+.wcPickerList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 220px;
+  overflow-y: auto;
+  margin-bottom: 4px;
+}
+
+.wcPickerOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13.5px;
+  text-align: left;
+  transition: background 0.15s ease;
+}
+
+.wcPickerOption:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.wcPickerCountry {
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.5);
+}
