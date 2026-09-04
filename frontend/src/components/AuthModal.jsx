@@ -1,9 +1,12 @@
-import { useState } from 'react'
-import { registerUser, loginUser, verifyEmail } from '../api'
+import { useState, useEffect } from 'react'
+import { registerUser, loginUser, verifyEmail, resendCode } from '../api'
 import './AuthModal.css'
 
+const PENDING_KEY = 'campusbuddy_pending_verification_email'
+
 export default function AuthModal({ authMode, onClose, onAuthSuccess, onSwitchMode }) {
-  const [step, setStep] = useState('form')
+  const [step, setStep] = useState('form') // 'form' | 'verify'
+
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -11,6 +14,9 @@ export default function AuthModal({ authMode, onClose, onAuthSuccess, onSwitchMo
 
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [resendMessage, setResendMessage] = useState('')
+
+  const pendingEmail = localStorage.getItem(PENDING_KEY)
 
   if (!authMode) return null
 
@@ -20,6 +26,7 @@ export default function AuthModal({ authMode, onClose, onAuthSuccess, onSwitchMo
     setPassword('')
     setCode('')
     setError('')
+    setResendMessage('')
     setStep('form')
   }
 
@@ -28,20 +35,21 @@ export default function AuthModal({ authMode, onClose, onAuthSuccess, onSwitchMo
     onClose()
   }
 
+  const goToVerifyForPendingEmail = () => {
+    setEmail(pendingEmail)
+    setError('')
+    setStep('verify')
+  }
+
   const handleFormSubmit = async (e) => {
     e.preventDefault()
     setError('')
-
-    if (authMode === 'signup' && !email.toLowerCase().endsWith('@autuni.ac.nz')) {
-      setError('You must sign up with an AUT student email (@autuni.ac.nz)')
-      return
-    }
-
     setIsSubmitting(true)
 
     try {
       if (authMode === 'signup') {
         await registerUser(username, email, password)
+        localStorage.setItem(PENDING_KEY, email) // remember it in case they close out
         setStep('verify')
       } else {
         const result = await loginUser(email, password)
@@ -62,12 +70,24 @@ export default function AuthModal({ authMode, onClose, onAuthSuccess, onSwitchMo
 
     try {
       await verifyEmail(email, code)
+      localStorage.removeItem(PENDING_KEY) // done — clear the "still pending" flag
       resetFields()
       onSwitchMode('login')
     } catch (err) {
       setError(err.message)
     } finally {
       setIsSubmitting(false)
+    }
+  }
+
+  const handleResend = async () => {
+    setError('')
+    setResendMessage('')
+    try {
+      await resendCode(email)
+      setResendMessage('New code sent — check your email')
+    } catch (err) {
+      setError(err.message)
     }
   }
 
@@ -88,6 +108,12 @@ export default function AuthModal({ authMode, onClose, onAuthSuccess, onSwitchMo
                   : 'Enter your credentials to access your dashboard'}
               </p>
             </div>
+
+            {authMode === 'login' && pendingEmail && (
+              <button className="pendingVerifyBanner" onClick={goToVerifyForPendingEmail}>
+                Still need to verify {pendingEmail}? Tap here →
+              </button>
+            )}
 
             <form className="formStack" onSubmit={handleFormSubmit}>
               {authMode === 'signup' && (
@@ -163,9 +189,7 @@ export default function AuthModal({ authMode, onClose, onAuthSuccess, onSwitchMo
           <>
             <div className="modalHeader">
               <h2 className="modalHeading">Check your email</h2>
-              <p className="modalCaption">
-                We sent a 6-digit code to {email}
-              </p>
+              <p className="modalCaption">We sent a 6-digit code to {email}</p>
             </div>
 
             <form className="formStack" onSubmit={handleVerifySubmit}>
@@ -183,9 +207,14 @@ export default function AuthModal({ authMode, onClose, onAuthSuccess, onSwitchMo
               </div>
 
               {error && <p className="formError">{error}</p>}
+              {resendMessage && <p className="formSuccess">{resendMessage}</p>}
 
               <button type="submit" className="btnGlass btnPrimary btnFullWidth" disabled={isSubmitting}>
                 {isSubmitting ? 'Verifying...' : 'Verify →'}
+              </button>
+
+              <button type="button" className="linkToggle resendLink" onClick={handleResend}>
+                Didn't get a code? Resend
               </button>
             </form>
           </>

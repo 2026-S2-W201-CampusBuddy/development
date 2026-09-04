@@ -128,3 +128,11 @@ export async function loginUser(email, password) {
   })
   return handleResponse(response)
 }
+export async function resendCode(email) {
+  const response = await fetch(`${BASE_URL}/api/resend-code`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  })
+  return handleResponse(response)
+}
