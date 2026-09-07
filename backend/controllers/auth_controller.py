@@ -69,3 +69,19 @@ def login_logic(email, password):
         "message": "Login successful",
         "data": {"id": user.id, "username": user.username}
     }, 200
+def resend_code_logic(email):
+    user = User.find_by_email(email)
+
+    if not user:
+        return {"status": "error", "message": "No account found for this email"}, 404
+
+    if user.is_verified:
+        return {"status": "error", "message": "Email already verified"}, 400
+
+    code = generate_code()
+    expires_at = datetime.utcnow() + timedelta(minutes=15)
+    user.set_verification_code(code, expires_at)
+
+    send_verification_email(email, code)
+
+    return {"status": "success", "message": "New code sent"}, 200

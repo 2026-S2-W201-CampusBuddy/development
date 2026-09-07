@@ -1,21 +1,37 @@
-/* Events Modal Specific Styles */
-
 .eventsDialog {
-  max-width: 460px;
+  max-width: 1080px;
 }
 
-.instagramSinglePost {
+.eventsModalBody {
   display: flex;
-  justify-content: center;
-  margin-bottom: 14px;
+  flex-direction: column;
+  gap: 14px;
 }
 
-.instagramSinglePost .instagram-media {
+.instagramFeedGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-height: 620px;
+  overflow-y: auto;
+  justify-items: center;
+}
+
+.instagramFeedGrid .instagram-media {
   width: 100% !important;
-  max-width: 400px !important;
+  min-width: 0 !important;
+  max-width: 340px !important;
 }
 
-.eventsExternalBtn {
+.eventsExternalLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.eventsExternalLinks a {
   text-align: center;
   text-decoration: none;
 }
