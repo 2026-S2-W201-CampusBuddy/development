@@ -2,8 +2,8 @@ from models.post_model import Post
 from models.comment_model import Comment
 from extensions import db
 
-def create_post_logic(title, content, author, category='general'):
-    new_post = Post.add_post(title, content, author, category)
+def create_post_logic(title, content, author, category='general', event_date=None, event_location=None):
+    new_post = Post.add_post(title, content, author, category, event_date, event_location)
     return {
         "status": "success",
         "message": "Post created successfully",

@@ -114,7 +114,14 @@ export default function MainPage({ loggedUser }) {
       /> 
       <MapModal isOpen={isMapOpen} onClose={() => setIsMapOpen(false)} />
       <GroceryModal isOpen={isGroceryOpen} onClose={() => setIsGroceryOpen(false)} currentUser={loggedUser} />
-      <EventsModal isOpen={isEventsOpen} onClose={() => setIsEventsOpen(false)} />
+      <EventsModal
+        isOpen={isEventsOpen}
+        onClose={() => setIsEventsOpen(false)}
+        onOpenCommunityEvents={(view) => {
+          setIsEventsOpen(false)
+          openCommunityModal('event', view)
+        }}
+      />
       <RentModal
         isOpen={isRentOpen}
         onClose={() => setIsRentOpen(false)}

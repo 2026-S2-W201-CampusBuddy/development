@@ -19,11 +19,11 @@ export async function getPost(postId) {
   return handleResponse(response)
 }
 
-export async function createPost(title, content, author, category = 'general') {
+export async function createPost(title, content, author, category = 'general', eventDate = null, eventLocation = null) {
   const response = await fetch(`${BASE_URL}/api/posts`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title, content, author, category }),
+    body: JSON.stringify({ title, content, author, category, event_date: eventDate, event_location: eventLocation }),
   })
   return handleResponse(response)
 }
