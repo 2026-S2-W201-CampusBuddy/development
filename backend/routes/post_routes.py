@@ -19,8 +19,10 @@ def create_post():
     content = data['content']
     author = data['author']
     category = data.get('category', 'general')
+    event_date = data.get('event_date')
+    event_location = data.get('event_location')
 
-    result = create_post_logic(title, content, author, category)
+    result = create_post_logic(title, content, author, category, event_date, event_location)
     return jsonify(result), 201
 
 @post_bp.route('/posts', methods=['GET'])

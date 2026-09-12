@@ -8,6 +8,7 @@ const CATEGORIES = [
   { id: 'food', label: '🍕 Eatery' },
   { id: 'wellness', label: '🏃 Wellness' },
   { id: 'travelling', label: '✈️ Travelling' },
+  { id: 'event', label: '🎉 Events' },
 ]
 
 const CATEGORY_PLACEHOLDERS = {
@@ -30,6 +31,10 @@ const CATEGORY_PLACEHOLDERS = {
   travelling: {
     title: 'E.g., Day trip ideas or weekend getaways around Auckland?',
     content: 'Share travel tips, scenic spots, or public transport advice...',
+  },
+  event: {
+    title: 'E.g., End-of-semester international student mixer',
+    content: 'Share the details — what it is, who it\'s for, anything people should bring...',
   },
 }
 
@@ -69,6 +74,8 @@ export default function CommunityModal({
   const [newCategory, setNewCategory] = useState(initialCategory)
   const [posting, setPosting] = useState(false)
   const [createPostError, setCreatePostError] = useState('')
+  const [newEventDate, setNewEventDate] = useState('')
+  const [newEventLocation, setNewEventLocation] = useState('')
 
   // Post edit & inline delete states
   const [isEditingPost, setIsEditingPost] = useState(false)
@@ -149,9 +156,11 @@ export default function CommunityModal({
     setCreatePostError('')
     setPosting(true)
     try {
-      await submitPost(newTitle, newContent, currentUser, newCategory)
+      await submitPost(newTitle, newContent, currentUser, newCategory, newEventDate, newEventLocation)
       setNewTitle('')
       setNewContent('')
+      setNewEventDate('')
+      setNewEventLocation('')
       setSelectedCategory(newCategory)
       setView('list')
     } catch (err) {
@@ -326,6 +335,12 @@ export default function CommunityModal({
                         </div>
 
                         <h3 className="communityPostTitle">{post.title}</h3>
+                        {post.category === 'event' && (
+                          <p className="postTimeAgo">
+                            {post.event_date && `📅 ${new Date(post.event_date).toLocaleString()}`}
+                            {post.event_location && ` · 📍 ${post.event_location}`}
+                          </p>
+                        )}
                         <p className="communityPostPreview">{post.content}</p>
                       </div>
                     )
@@ -361,6 +376,12 @@ export default function CommunityModal({
                 <div className="postDetailContainer">
                   <div className="communityPostDetail">
                     <div className="postDetailMetaBar">
+                      {activePost.category === 'event' && (
+                        <p className="postTimeAgo">
+                          {activePost.event_date && `📅 ${new Date(activePost.event_date).toLocaleString()}`}
+                          {activePost.event_location && ` · 📍 ${activePost.event_location}`}
+                        </p>
+                      )}
                       <div className="postDetailMetaLeft">
                         <span className="postCategoryBadge">
                           {CATEGORIES.find((c) => c.id === activePost.category)?.label || activePost.category || 'General'}
@@ -736,6 +757,32 @@ export default function CommunityModal({
                     required
                   />
                 </div>
+
+                {newCategory === 'event' && (
+                  <>
+                    <div className="inputFieldGroup">
+                      <label className="fieldLabel">Date & Time</label>
+                      <input
+                        type="datetime-local"
+                        className="liquidInput"
+                        value={newEventDate}
+                        onChange={(e) => setNewEventDate(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="inputFieldGroup">
+                      <label className="fieldLabel">Location</label>
+                      <input
+                        type="text"
+                        className="liquidInput"
+                        placeholder="e.g. WG403"
+                        value={newEventLocation}
+                        onChange={(e) => setNewEventLocation(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </>
+                )}
 
                 <div className="inputFieldGroup">
                   <label className="fieldLabel">Message Content</label>
