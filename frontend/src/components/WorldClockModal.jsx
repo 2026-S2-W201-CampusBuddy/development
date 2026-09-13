@@ -12,6 +12,7 @@ export default function WorldClockModal({ isOpen, onClose }) {
     searchResults,
     addCity,
     removeCity,
+    usedFallback,
   } = useWorldClock()
   const [isPickerOpen, setIsPickerOpen] = useState(false)
 
@@ -46,10 +47,16 @@ export default function WorldClockModal({ isOpen, onClose }) {
           <div className="wcAucklandTime">{aucklandTime}</div>
         </div>
 
+        {usedFallback && (
+          <p className="wcFallbackNote">
+            ⏱️ Live time service is briefly unavailable — showing calculated times instead.
+          </p>
+        )}
+
         {savedCities.length > 0 && (
           <div className="wcCityList">
             {savedCities.map((city) => (
-              <div key={city.tz} className="wcCityRow">
+              <div key={city.id} className="wcCityRow">
                 <div className="wcCityInfo">
                   <span className="wcCityLabel">
                     {city.label}
@@ -64,7 +71,7 @@ export default function WorldClockModal({ isOpen, onClose }) {
                   </span>
                   <button
                     className="wcRemoveBtn"
-                    onClick={() => removeCity(city.tz)}
+                    onClick={() => removeCity(city.id)}
                     aria-label={`Remove ${city.label}`}
                   >
                     ✕
@@ -102,7 +109,7 @@ export default function WorldClockModal({ isOpen, onClose }) {
 
             <div className="wcPickerList">
               {listToShow.map((city) => (
-                <button key={city.tz} className="wcPickerOption" onClick={() => handleAdd(city)}>
+                <button key={city.id} className="wcPickerOption" onClick={() => handleAdd(city)}>
                   <span>{city.label}</span>
                   <span className="wcPickerCountry">{city.country}</span>
                 </button>
