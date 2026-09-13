@@ -7,15 +7,19 @@ class Post(db.Model):
     content = db.Column(db.Text, nullable=False)
     author = db.Column(db.String(100), nullable=False)
     category = db.Column(db.String(50), nullable=False, default='general')
+    event_date = db.Column(db.String(50), nullable=True)
+    event_location = db.Column(db.String(200), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     @staticmethod
-    def add_post(title, content, author, category='general'):
+    def add_post(title, content, author, category='general', event_date=None, event_location=None):
         new_post = Post(
             title=title,
             content=content,
             author=author,
-            category=category
+            category=category,
+            event_date=event_date,
+            event_location=event_location,
         )
         db.session.add(new_post)
         db.session.commit()
@@ -46,5 +50,7 @@ class Post(db.Model):
             "content": self.content,
             "author": self.author,
             "category": self.category,
+            "event_date": self.event_date,
+            "event_location": self.event_location,
             "created_at": self.created_at.isoformat() + "Z"
         }

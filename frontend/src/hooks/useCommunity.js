@@ -47,11 +47,11 @@ export default function useCommunity() {
     setComments([])
   }, [])
 
-  const submitPost = useCallback(async (title, content, author, category = 'general') => {
-    const json = await createPost(title, content, author, category)
+    const submitPost = useCallback(async (title, content, author, category = 'general', eventDate = null, eventLocation = null) => {
+    const json = await createPost(title, content, author, category, eventDate, eventLocation)
     setPosts((prev) => [json.data, ...prev])
     return json.data
-  }, [])
+    }, [])
 
   // Edit existing post
   const editPost = useCallback(async (postId, title, content, author) => {
