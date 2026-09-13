@@ -87,6 +87,12 @@ export async function getAucklandWeather() {
   return handleResponse(response)
 }
 
+export async function getWorldClockTimes(zones) {
+  const zonesParam = encodeURIComponent(zones.join(','))
+  const response = await fetch(`${BASE_URL}/api/worldclock?zones=${zonesParam}`)
+  return handleResponse(response)
+}
+
 export async function getRentAreas() {
   const response = await fetch(`${BASE_URL}/api/rent/areas`)
   return handleResponse(response)
