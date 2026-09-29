@@ -15,6 +15,7 @@ from routes.api_routes import api_bp
 from routes.post_routes import post_bp
 from routes.comment_routes import comment_bp
 from routes.auth_routes import auth_bp
+from routes.friend_routes import friend_bp
 
 # Initialize the Flask app
 app = Flask(__name__)
@@ -35,10 +36,18 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(weather_bp)
 app.register_blueprint(rent_bp)
 app.register_blueprint(worldclock_bp)
+app.register_blueprint(friend_bp)
 
 # Create the database file/tabcles if they don't already exist
 with app.app_context():
     db.create_all()
+
+# Factory function to support pytest execution
+def create_app(config_name='testing'):
+    if config_name == 'testing':
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+        app.config['TESTING'] = True
+    return app
 
 # Start the server
 if __name__ == '__main__':
