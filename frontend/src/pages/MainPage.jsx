@@ -9,6 +9,7 @@ import useWeather from '../hooks/useWeather'
 import useRent from '../hooks/useRent'
 import MapModal from '../components/MapModal'
 import EventsModal from '../components/EventsModal'
+import FriendsModal from '../components/FriendsModal'
 import './MainPage.css'
 
 export default function MainPage({ loggedUser }) {
@@ -19,6 +20,10 @@ export default function MainPage({ loggedUser }) {
   const [isEventsOpen, setIsEventsOpen] = useState(false)
   const [isRentOpen, setIsRentOpen] = useState(false)
   const [isClockOpen, setIsClockOpen] = useState(false)
+  const [isFriendsOpen, setIsFriendsOpen] = useState(false)
+  
+  // Pending friend requests counter for the main hub orb
+  const [pendingRequestsCount, setPendingRequestsCount] = useState(0)
 
   // Community modal configuration state
   const [communityState, setCommunityState] = useState({
@@ -32,6 +37,7 @@ export default function MainPage({ loggedUser }) {
   const { weather } = weatherState
   const rentState = useRent()
 
+  // Real-time clock timer
   useEffect(() => {
     const updateTime = () => {
       const now = new Date()
@@ -43,6 +49,29 @@ export default function MainPage({ loggedUser }) {
     const timer = setInterval(updateTime, 1000)
     return () => clearInterval(timer)
   }, [])
+
+  // Function to fetch pending friend request count from backend
+  const fetchPendingCount = async () => {
+    const userId = loggedUser?.id || loggedUser?.user_id
+    if (!userId) return
+
+    try {
+      const res = await fetch(`/api/friends/requests/pending?user_id=${userId}`)
+      if (res.ok) {
+        const data = await res.json()
+        setPendingRequestsCount(Array.isArray(data) ? data.length : 0)
+      }
+    } catch (err) {
+      console.error('Failed to fetch pending requests count:', err)
+    }
+  }
+
+  // Poll friend requests count on load and every 30 seconds
+  useEffect(() => {
+    fetchPendingCount()
+    const interval = setInterval(fetchPendingCount, 30000)
+    return () => clearInterval(interval)
+  }, [loggedUser])
 
   // Helper function to open Community modal with target category and view
   const openCommunityModal = (category = 'general', view = 'list') => {
@@ -73,7 +102,15 @@ export default function MainPage({ loggedUser }) {
       { id: 'market', icon: '🛒', label: 'Groceries', accentColor: '#fb7185', glowColor: 'rgba(251, 113, 133, 0.4)', action: () => setIsGroceryOpen(true) },
       { id: 'quickAdd', icon: '➕', label: 'New Post', accentColor: '#a78bfa', glowColor: 'rgba(167, 139, 250, 0.4)', action: () => openCommunityModal('general', 'new') },
       { id: 'community', icon: '💬', label: 'Community', accentColor: '#818cf8', glowColor: 'rgba(129, 140, 248, 0.4)', action: () => openCommunityModal('general', 'list') },
-      { id: 'shuttle', icon: '🚌', label: 'Shuttle', accentColor: '#fb923c', glowColor: 'rgba(251, 146, 60, 0.4)', action: () => alert('Shuttle Bus') }
+      { 
+        id: 'friends', 
+        icon: '👥', 
+        // Display count badge on the orb label when pending requests exist
+        label: pendingRequestsCount > 0 ? `Friends (${pendingRequestsCount})` : 'Friends', 
+        accentColor: '#fb923c', 
+        glowColor: 'rgba(251, 146, 60, 0.4)', 
+        action: () => setIsFriendsOpen(true) 
+      }
     ],
     // Row 3 (5 Orbs with Central Clock)
     [
@@ -81,7 +118,6 @@ export default function MainPage({ loggedUser }) {
       { id: 'map', icon: '🗺️', label: 'Campus Map', accentColor: '#38bdf8', glowColor: 'rgba(56, 189, 248, 0.45)', action: () => setIsMapOpen(true) },
       { id: 'clock', isClock: true, label: 'Auckland', accentColor: '#ffffff', glowColor: 'rgba(255, 255, 255, 0.65)', action: () => setIsClockOpen(true) },
       { id: 'events', icon: '🎪', label: 'Events', accentColor: '#f472b6', glowColor: 'rgba(244, 114, 182, 0.4)', action: () => setIsEventsOpen(true) },
-      // Changed Library to Travelling orb (Opens Community with 'travelling' category)
       { id: 'travelling', icon: '✈️', label: 'Travelling', accentColor: '#38bdf8', glowColor: 'rgba(56, 189, 248, 0.4)', action: () => openCommunityModal('travelling', 'list') }
     ],
     // Row 4 (4 Orbs)
@@ -130,6 +166,14 @@ export default function MainPage({ loggedUser }) {
         {...rentState}
       />
       <WorldClockModal isOpen={isClockOpen} onClose={() => setIsClockOpen(false)} />
+      <FriendsModal 
+        isOpen={isFriendsOpen} 
+        onClose={() => {
+          setIsFriendsOpen(false)
+          fetchPendingCount() // Sync count when modal closes
+        }} 
+        currentUser={loggedUser} 
+      />
     </main>
   )
 }

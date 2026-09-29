@@ -54,7 +54,7 @@ export default function AuthModal({ authMode, onClose, onAuthSuccess, onSwitchMo
       } else {
         const result = await loginUser(email, password)
         resetFields()
-        onAuthSuccess({ username: result.data.username })
+        onAuthSuccess(result.data)
       }
     } catch (err) {
       setError(err.message)

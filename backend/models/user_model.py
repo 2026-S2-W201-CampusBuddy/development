@@ -1,13 +1,15 @@
-from extensions import db
-from werkzeug.security import generate_password_hash, check_password_hash
+# backend/models/user_model.py
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
+from extensions import db
 
 class User(db.Model):
+    __tablename__ = 'users'
+
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
-    # Added preferred location for grocery search
     preferred_location = db.Column(db.String(100), default='Auckland CBD')
 
     is_verified = db.Column(db.Boolean, default=False)
@@ -17,7 +19,13 @@ class User(db.Model):
     @staticmethod
     def create_user(username, email, password):
         hashed_password = generate_password_hash(password)
-        new_user = User(username=username, email=email, password_hash=hashed_password, preferred_location='Auckland CBD', is_verified=False)
+        new_user = User(
+            username=username,
+            email=email,
+            password_hash=hashed_password,
+            preferred_location='Auckland CBD',
+            is_verified=False
+        )
         db.session.add(new_user)
         db.session.commit()
         return new_user
