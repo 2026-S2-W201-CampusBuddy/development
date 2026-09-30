@@ -10,9 +10,10 @@ import useRent from '../hooks/useRent'
 import MapModal from '../components/MapModal'
 import EventsModal from '../components/EventsModal'
 import FriendsModal from '../components/FriendsModal'
+import SettingsModal from '../components/SettingsModal'
 import './MainPage.css'
 
-export default function MainPage({ loggedUser }) {
+export default function MainPage({ loggedUser, onUsernameChanged, onLogout }) {
   const [liveTime, setLiveTime] = useState('')
   const [isWeatherOpen, setIsWeatherOpen] = useState(false)
   const [isMapOpen, setIsMapOpen] = useState(false)
@@ -21,7 +22,8 @@ export default function MainPage({ loggedUser }) {
   const [isRentOpen, setIsRentOpen] = useState(false)
   const [isClockOpen, setIsClockOpen] = useState(false)
   const [isFriendsOpen, setIsFriendsOpen] = useState(false)
-  
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+
   // Pending friend requests counter for the main hub orb
   const [pendingRequestsCount, setPendingRequestsCount] = useState(0)
 
@@ -102,14 +104,14 @@ export default function MainPage({ loggedUser }) {
       { id: 'market', icon: '🛒', label: 'Groceries', accentColor: '#fb7185', glowColor: 'rgba(251, 113, 133, 0.4)', action: () => setIsGroceryOpen(true) },
       { id: 'quickAdd', icon: '➕', label: 'New Post', accentColor: '#a78bfa', glowColor: 'rgba(167, 139, 250, 0.4)', action: () => openCommunityModal('general', 'new') },
       { id: 'community', icon: '💬', label: 'Community', accentColor: '#818cf8', glowColor: 'rgba(129, 140, 248, 0.4)', action: () => openCommunityModal('general', 'list') },
-      { 
-        id: 'friends', 
-        icon: '👥', 
+      {
+        id: 'friends',
+        icon: '👥',
         // Display count badge on the orb label when pending requests exist
-        label: pendingRequestsCount > 0 ? `Friends (${pendingRequestsCount})` : 'Friends', 
-        accentColor: '#fb923c', 
-        glowColor: 'rgba(251, 146, 60, 0.4)', 
-        action: () => setIsFriendsOpen(true) 
+        label: pendingRequestsCount > 0 ? `Friends (${pendingRequestsCount})` : 'Friends',
+        accentColor: '#fb923c',
+        glowColor: 'rgba(251, 146, 60, 0.4)',
+        action: () => setIsFriendsOpen(true)
       }
     ],
     // Row 3 (5 Orbs with Central Clock)
@@ -129,7 +131,7 @@ export default function MainPage({ loggedUser }) {
     ],
     // Row 5 (3 Orbs)
     [
-      { id: 'settings', icon: '⚙️', label: 'Settings', accentColor: '#94a3b8', glowColor: 'rgba(148, 163, 184, 0.4)', action: () => alert('Settings') },
+      { id: 'settings', icon: '⚙️', label: 'Settings', accentColor: '#94a3b8', glowColor: 'rgba(148, 163, 184, 0.4)', action: () => setIsSettingsOpen(true) },
       { id: 'profile', icon: '👤', label: 'Student ID', accentColor: '#38bdf8', glowColor: 'rgba(56, 189, 248, 0.4)', action: () => alert('Student Profile') },
       { id: 'canvas', icon: '🔗', label: 'Canvas', accentColor: '#ef4444', glowColor: 'rgba(239, 68, 68, 0.4)', action: () => alert('Canvas Portal') }
     ]
@@ -149,7 +151,7 @@ export default function MainPage({ loggedUser }) {
         initialCategory={communityState.category}
         onClose={closeCommunityModal}
         currentUser={loggedUser}
-      /> 
+      />
       <MapModal isOpen={isMapOpen} onClose={() => setIsMapOpen(false)} />
       <GroceryModal isOpen={isGroceryOpen} onClose={() => setIsGroceryOpen(false)} currentUser={loggedUser} />
       <EventsModal
@@ -166,13 +168,20 @@ export default function MainPage({ loggedUser }) {
         {...rentState}
       />
       <WorldClockModal isOpen={isClockOpen} onClose={() => setIsClockOpen(false)} />
-      <FriendsModal 
-        isOpen={isFriendsOpen} 
+      <FriendsModal
+        isOpen={isFriendsOpen}
         onClose={() => {
           setIsFriendsOpen(false)
           fetchPendingCount() // Sync count when modal closes
-        }} 
-        currentUser={loggedUser} 
+        }}
+        currentUser={loggedUser}
+      />
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        currentUser={loggedUser}
+        onUsernameChanged={onUsernameChanged}
+        onLogout={onLogout}
       />
     </main>
   )

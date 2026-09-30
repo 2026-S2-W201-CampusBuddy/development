@@ -7,19 +7,14 @@ import MainPage from './pages/MainPage'
 function App() {
   const [currentPage, setCurrentPage] = useState('landing')
   const [authMode, setAuthMode] = useState(null)
-
-  // Store user object instead of a string to provide user id across components
-  // Set a default mock object or null depending on auth state
-  const [loggedUser, setLoggedUser] = useState({ id: 1, username: 'John Doe', email: 'john@example.com' })
+  const [loggedUser, setLoggedUser] = useState('John Doe')
 
   const handleAuthSuccess = (userData) => {
-    // userData is now { id: 1, username: "..." }
-    setLoggedUser(userData)
+    setLoggedUser(userData.username)
     setAuthMode(null)
     setCurrentPage('main')
   }
 
-  // Handle logout: clear user state and return to landing
   const handleLogout = () => {
     setLoggedUser(null)
     setCurrentPage('landing')
@@ -32,14 +27,17 @@ function App() {
         onNavigate={setCurrentPage}
         onOpenAuth={setAuthMode}
         onLogout={handleLogout}
-        // Pass username string to Navbar for display
-        loggedUser={loggedUser?.username || loggedUser}
+        loggedUser={loggedUser}
       />
 
       {currentPage === 'landing' ? (
         <LandingPage />
       ) : (
-        <MainPage loggedUser={loggedUser} />
+        <MainPage
+          loggedUser={loggedUser}
+          onUsernameChanged={setLoggedUser}
+          onLogout={handleLogout}
+        />
       )}
 
       <AuthModal
