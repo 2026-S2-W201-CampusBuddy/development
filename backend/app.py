@@ -7,6 +7,7 @@ from routes.rent_routes import rent_bp
 from routes.worldclock_routes import worldclock_bp
 import os
 from dotenv import load_dotenv
+from routes.settings_routes import settings_bp
 
 load_dotenv()  # This line loads variables from .env file into os.environ
 
@@ -37,6 +38,7 @@ app.register_blueprint(weather_bp)
 app.register_blueprint(rent_bp)
 app.register_blueprint(worldclock_bp)
 app.register_blueprint(friend_bp)
+app.register_blueprint(settings_bp)
 
 # Create the database file/tabcles if they don't already exist
 with app.app_context():

@@ -1,0 +1,68 @@
+.settingsMenuList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settingsMenuItem {
+  width: 100%;
+  text-align: left;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.settingsMenuItem:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dangerItem {
+  color: #f87171;
+}
+
+.dangerBtn {
+  background: rgba(248, 113, 113, 0.2);
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  color: #ffffff;
+}
+
+.settingsToggleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: default;
+}
+
+.toggleSwitch {
+  width: 44px;
+  height: 24px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  position: relative;
+  cursor: pointer;
+}
+
+.toggleSwitch::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  transition: left 0.15s;
+}
+
+.toggleSwitch.on {
+  background: #818cf8;
+}
+
+.toggleSwitch.on::after {
+  left: 23px;
+}

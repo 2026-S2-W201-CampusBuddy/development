@@ -142,3 +142,51 @@ export async function resendCode(email) {
   })
   return handleResponse(response)
 }
+export async function changeUsername(username, currentPassword, newUsername) {
+  const response = await fetch(`${BASE_URL}/api/user/username`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, current_password: currentPassword, new_username: newUsername }),
+  })
+  return handleResponse(response)
+}
+
+export async function changePassword(username, currentPassword, newPassword) {
+  const response = await fetch(`${BASE_URL}/api/user/password`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, current_password: currentPassword, new_password: newPassword }),
+  })
+  return handleResponse(response)
+}
+
+export async function deleteAccount(username, currentPassword) {
+  const response = await fetch(`${BASE_URL}/api/user/account`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, current_password: currentPassword }),
+  })
+  return handleResponse(response)
+}
+
+export async function updateNotifications(username, enabled) {
+  const response = await fetch(`${BASE_URL}/api/user/notifications`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, enabled }),
+  })
+  return handleResponse(response)
+}
+export async function getUserLocation(username) {
+  const response = await fetch(`${BASE_URL}/api/user/location/${username}`)
+  return handleResponse(response)
+}
+
+export async function updateUserLocation(username, location) {
+  const response = await fetch(`${BASE_URL}/api/user/location`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, location }),
+  })
+  return handleResponse(response)
+}

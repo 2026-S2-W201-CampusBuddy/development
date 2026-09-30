@@ -51,3 +51,21 @@ class User(db.Model):
         self.verification_code = None
         self.verification_code_expires = None
         db.session.commit()
+
+    notifications_enabled = db.Column(db.Boolean, default=True)
+
+    def update_username(self, new_username):
+        self.username = new_username
+        db.session.commit()
+
+    def update_password(self, new_password):
+        self.password_hash = generate_password_hash(new_password)
+        db.session.commit()
+
+    def update_notifications(self, enabled):
+        self.notifications_enabled = enabled
+        db.session.commit()
+
+    def delete_account(self):
+        db.session.delete(self)
+        db.session.commit()
