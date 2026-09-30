@@ -190,3 +190,27 @@ export async function updateUserLocation(username, location) {
   })
   return handleResponse(response)
 }
+
+const FRANKFURTER_URL = 'https://api.frankfurter.dev/v1'
+
+export async function convertCurrency(amount, fromCurrency, toCurrency) {
+  const response = await fetch(`${FRANKFURTER_URL}/latest?base=${fromCurrency}&symbols=${toCurrency}`)
+  if (!response.ok) {
+    throw new Error('Could not fetch exchange rate')
+  }
+  const data = await response.json()
+  const rate = data.rates[toCurrency]
+  return {
+    rate,
+    convertedAmount: amount * rate,
+    date: data.date,
+  }
+}
+
+export async function getSupportedCurrencies() {
+  const response = await fetch(`${FRANKFURTER_URL}/currencies`)
+  if (!response.ok) {
+    throw new Error('Could not fetch currency list')
+  }
+  return response.json()
+}

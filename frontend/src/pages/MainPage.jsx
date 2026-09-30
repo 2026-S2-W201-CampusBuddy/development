@@ -11,6 +11,7 @@ import MapModal from '../components/MapModal'
 import EventsModal from '../components/EventsModal'
 import FriendsModal from '../components/FriendsModal'
 import SettingsModal from '../components/SettingsModal'
+import CurrencyModal from '../components/CurrencyModal'
 import './MainPage.css'
 
 export default function MainPage({ loggedUser, onUsernameChanged, onLogout }) {
@@ -23,7 +24,7 @@ export default function MainPage({ loggedUser, onUsernameChanged, onLogout }) {
   const [isClockOpen, setIsClockOpen] = useState(false)
   const [isFriendsOpen, setIsFriendsOpen] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
-
+  const [isCurrencyOpen, setIsCurrencyOpen] = useState(false)
   // Pending friend requests counter for the main hub orb
   const [pendingRequestsCount, setPendingRequestsCount] = useState(0)
 
@@ -132,7 +133,7 @@ export default function MainPage({ loggedUser, onUsernameChanged, onLogout }) {
     // Row 5 (3 Orbs)
     [
       { id: 'settings', icon: '⚙️', label: 'Settings', accentColor: '#94a3b8', glowColor: 'rgba(148, 163, 184, 0.4)', action: () => setIsSettingsOpen(true) },
-      { id: 'profile', icon: '👤', label: 'Student ID', accentColor: '#38bdf8', glowColor: 'rgba(56, 189, 248, 0.4)', action: () => alert('Student Profile') },
+      { id: 'currency', icon: '💱', label: 'Currency Exchange', accentColor: '#facc15', glowColor: 'rgba(250, 204, 21, 0.4)', action: () => setIsCurrencyOpen(true) },
       { id: 'canvas', icon: '🔗', label: 'Canvas', accentColor: '#ef4444', glowColor: 'rgba(239, 68, 68, 0.4)', action: () => alert('Canvas Portal') }
     ]
   ]
@@ -183,6 +184,7 @@ export default function MainPage({ loggedUser, onUsernameChanged, onLogout }) {
         onUsernameChanged={onUsernameChanged}
         onLogout={onLogout}
       />
+      <CurrencyModal isOpen={isCurrencyOpen} onClose={() => setIsCurrencyOpen(false)} />
     </main>
   )
 }
