@@ -1,0 +1,64 @@
+.currencyDialog {
+  max-width: 440px;
+}
+
+.currencyForm {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.currencyRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.currencyRow .inputFieldGroup {
+  flex: 1;
+}
+
+.currencySwapBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 2px;
+}
+
+.currencySwapBtn:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.currencyResult {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 18px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  text-align: center;
+}
+
+.currencyResultAmount {
+  font-family: var(--fontDisplay);
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.currencyResultRate {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+}
+.currencyDialog .hubModalBody {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 16px;
+}
