@@ -102,3 +102,52 @@
   align-self: center;
   margin-top: 4px;
 }
+
+.termsGroup {
+  margin: 2px 0 4px;
+}
+
+.termsCheckboxRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+}
+
+.termsCheckboxRow input[type="checkbox"] {
+  margin-top: 2px;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--cyanGlow);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.termsReadLink {
+  margin-left: 0;
+  font-size: 13px;
+  padding: 0;
+}
+
+.termsTextBox {
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.65);
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.termsTextBox p {
+  margin: 0 0 8px;
+}
+
+.termsTextBox p:last-child {
+  margin-bottom: 0;
+}

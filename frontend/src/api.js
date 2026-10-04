@@ -113,11 +113,11 @@ export async function getCheapestRentAreas() {
   return handleResponse(response)
 }
 
-export async function registerUser(username, email, password) {
+export async function registerUser(username, email, password, agreedToTerms) {
   const response = await fetch(`${BASE_URL}/api/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, email, password }),
+    body: JSON.stringify({ username, email, password, agreedToTerms }),
   })
   return handleResponse(response)
 }

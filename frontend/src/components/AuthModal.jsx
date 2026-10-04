@@ -11,6 +11,8 @@ export default function AuthModal({ authMode, onClose, onAuthSuccess, onSwitchMo
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [code, setCode] = useState('')
+  const [agreedToTerms, setAgreedToTerms] = useState(false)
+  const [isTermsExpanded, setIsTermsExpanded] = useState(false)
 
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -28,6 +30,8 @@ export default function AuthModal({ authMode, onClose, onAuthSuccess, onSwitchMo
     setError('')
     setResendMessage('')
     setStep('form')
+    setAgreedToTerms(false)
+    setIsTermsExpanded(false)
   }
 
   const handleClose = () => {
@@ -48,7 +52,12 @@ export default function AuthModal({ authMode, onClose, onAuthSuccess, onSwitchMo
 
     try {
       if (authMode === 'signup') {
-        await registerUser(username, email, password)
+        if (!agreedToTerms) {
+          setError('You must agree to the Terms and Conditions to create an account')
+          setIsSubmitting(false)
+          return
+        }
+        await registerUser(username, email, password, agreedToTerms)
         localStorage.setItem(PENDING_KEY, email) // remember it in case they close out
         setStep('verify')
       } else {
@@ -153,6 +162,47 @@ export default function AuthModal({ authMode, onClose, onAuthSuccess, onSwitchMo
                   required
                 />
               </div>
+
+              {authMode === 'signup' && (
+                <div className="termsGroup">
+                  <label className="termsCheckboxRow">
+                    <input
+                      type="checkbox"
+                      checked={agreedToTerms}
+                      onChange={(e) => setAgreedToTerms(e.target.checked)}
+                    />
+                    <span>
+                      I agree to the{' '}
+                      <button
+                        type="button"
+                        className="linkToggle termsReadLink"
+                        onClick={() => setIsTermsExpanded((prev) => !prev)}
+                      >
+                        Terms and Conditions
+                      </button>
+                    </span>
+                  </label>
+
+                  {isTermsExpanded && (
+                    <div className="termsTextBox">
+                      <p>
+                        By creating a CampusBuddy account, you agree that content you post —
+                        including Community posts, comments, and Peer Review ratings and
+                        comments — may be visible to other members of the relevant group
+                        or community. Peer Review ratings and comments are visible to every
+                        member of the group they're submitted under.
+                      </p>
+                      <p>
+                        Your email is used only for account verification and essential
+                        account-related messages. You are responsible for keeping your
+                        login details secure and for the accuracy of what you post.
+                        CampusBuddy is a university student project and is provided as-is,
+                        without warranty.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {error && <p className="formError">{error}</p>}
 

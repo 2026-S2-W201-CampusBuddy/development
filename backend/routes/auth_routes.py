@@ -1,5 +1,4 @@
 from flask import Blueprint, jsonify, request
-from controllers.auth_controller import register_logic, login_logic, verify_email_logic
 from controllers.auth_controller import register_logic, login_logic, verify_email_logic, resend_code_logic
 auth_bp = Blueprint('auth', __name__, url_prefix='/api')
 
@@ -9,7 +8,9 @@ def register():
     if not data or 'username' not in data or 'email' not in data or 'password' not in data:
         return jsonify({"status": "error", "message": "username, email and password are required"}), 400
 
-    result, status_code = register_logic(data['username'], data['email'], data['password'])
+    result, status_code = register_logic(
+        data['username'], data['email'], data['password'], data.get('agreedToTerms', False)
+    )
     return jsonify(result), status_code
 
 
