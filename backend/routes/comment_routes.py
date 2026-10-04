@@ -8,6 +8,7 @@ from controllers.comment_controller import (
 
 comment_bp = Blueprint('comment', __name__, url_prefix='/api')
 
+# Create a new comment on a post
 @comment_bp.route('/posts/<int:post_id>/comments', methods=['POST'])
 def create_comment(post_id):
     data = request.get_json()
@@ -17,10 +18,19 @@ def create_comment(post_id):
     content = data['content']
     author = data['author']
     parent_id = data.get('parent_id', None)
+    # Optional user_id from payload for database foreign key linkage
+    user_id = data.get('user_id')
     
-    result, status_code = create_comment_logic(post_id, content, author, parent_id)
+    result, status_code = create_comment_logic(
+        post_id=post_id,
+        content=content,
+        author=author,
+        parent_id=parent_id,
+        user_id=user_id
+    )
     return jsonify(result), status_code
 
+# Retrieve comments for a post
 @comment_bp.route('/posts/<int:post_id>/comments', methods=['GET'])
 def get_comments(post_id):
     result, status_code = get_comments_logic(post_id)
@@ -33,7 +43,14 @@ def update_comment(post_id, comment_id):
     if not data or 'content' not in data or 'author' not in data:
         return jsonify({"status": "error", "message": "Content and author are required"}), 400
 
-    result, status_code = update_comment_logic(post_id, comment_id, data['content'], data['author'])
+    user_id = data.get('user_id')
+    result, status_code = update_comment_logic(
+        post_id=post_id,
+        comment_id=comment_id,
+        content=data['content'],
+        author=data['author'],
+        user_id=user_id
+    )
     return jsonify(result), status_code
 
 # Delete comment route (DELETE /api/posts/<post_id>/comments/<comment_id>)
@@ -43,5 +60,11 @@ def delete_comment(post_id, comment_id):
     if not data or 'author' not in data:
         return jsonify({"status": "error", "message": "Author is required"}), 400
 
-    result, status_code = delete_comment_logic(post_id, comment_id, data['author'])
+    user_id = data.get('user_id')
+    result, status_code = delete_comment_logic(
+        post_id=post_id,
+        comment_id=comment_id,
+        author=data['author'],
+        user_id=user_id
+    )
     return jsonify(result), status_code

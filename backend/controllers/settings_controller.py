@@ -1,16 +1,33 @@
+# In backend/controllers/settings_controller.py
 from models.user_model import User
+from models.post_model import Post
+from models.comment_model import Comment
+from extensions import db
 
 def change_username_logic(username, current_password, new_username):
-    user = User.find_by_username(username)
+    # Support both dict and string input safely
+    uname = username.get('username') if isinstance(username, dict) else username
+    user = User.find_by_username(uname)
     if not user or not user.check_password(current_password):
         return {"status": "error", "message": "Incorrect password"}, 401
 
     if User.find_by_username(new_username):
         return {"status": "error", "message": "Username already taken"}, 400
 
+    old_username = user.username
     user.update_username(new_username)
-    return {"status": "success", "message": "Username updated", "data": {"username": new_username}}, 200
 
+    # --- ADD THESE 3 LINES: Cascade updated username to existing posts and comments ---
+    Post.query.filter_by(author=old_username).update({'author': new_username})
+    Comment.query.filter_by(author=old_username).update({'author': new_username})
+    db.session.commit()
+    # ---------------------------------------------------------------------------------
+
+    return {
+        "status": "success",
+        "message": "Username updated",
+        "data": {"id": user.id, "username": new_username}
+    }, 200
 
 def change_password_logic(username, current_password, new_password):
     user = User.find_by_username(username)

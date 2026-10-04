@@ -5,6 +5,9 @@ import './SettingsModal.css'
 export default function SettingsModal({ isOpen, onClose, currentUser, onUsernameChanged, onLogout }) {
   const [view, setView] = useState('menu') 
 
+  // Safely extract username string whether currentUser is an object or string
+  const currentUsername = typeof currentUser === 'object' ? currentUser?.username : currentUser
+
   const [newUsername, setNewUsername] = useState('')
   const [currentPasswordForUsername, setCurrentPasswordForUsername] = useState('')
 
@@ -21,13 +24,16 @@ export default function SettingsModal({ isOpen, onClose, currentUser, onUsername
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && currentUsername) {
       setView('menu')
       setError('')
       setMessage('')
-      getUserLocation(currentUser).then((json) => setLocation(json.preferred_location || '')).catch(() => {})
+      // Use clean string currentUsername
+      getUserLocation(currentUsername)
+        .then((json) => setLocation(json?.preferred_location || ''))
+        .catch(() => {})
     }
-  }, [isOpen, currentUser])
+  }, [isOpen, currentUsername])
 
   if (!isOpen) return null
 
@@ -46,7 +52,8 @@ export default function SettingsModal({ isOpen, onClose, currentUser, onUsername
     setError('')
     setIsSubmitting(true)
     try {
-      const result = await changeUsername(currentUser, currentPasswordForUsername, newUsername)
+      // Pass clean string currentUsername
+      const result = await changeUsername(currentUsername, currentPasswordForUsername, newUsername)
       onUsernameChanged(result.data.username)
       resetFormFields()
       setView('menu')
@@ -62,7 +69,8 @@ export default function SettingsModal({ isOpen, onClose, currentUser, onUsername
     setError('')
     setIsSubmitting(true)
     try {
-      await changePassword(currentUser, currentPassword, newPassword)
+      // Pass clean string currentUsername
+      await changePassword(currentUsername, currentPassword, newPassword)
       resetFormFields()
       setMessage('Password updated')
       setView('menu')
@@ -76,7 +84,8 @@ export default function SettingsModal({ isOpen, onClose, currentUser, onUsername
   const handleSaveLocation = async () => {
     setError('')
     try {
-      await updateUserLocation(currentUser, location)
+      // Pass clean string currentUsername
+      await updateUserLocation(currentUsername, location)
       setMessage('Location saved')
     } catch (err) {
       setError(err.message)
@@ -87,7 +96,8 @@ export default function SettingsModal({ isOpen, onClose, currentUser, onUsername
     const newValue = !notificationsEnabled
     setNotificationsEnabled(newValue) // optimistic update
     try {
-      await updateNotifications(currentUser, newValue)
+      // Pass clean string currentUsername
+      await updateNotifications(currentUsername, newValue)
     } catch (err) {
       setNotificationsEnabled(!newValue) // revert on failure
       setError(err.message)
@@ -99,7 +109,8 @@ export default function SettingsModal({ isOpen, onClose, currentUser, onUsername
     setError('')
     setIsSubmitting(true)
     try {
-      await deleteAccount(currentUser, currentPasswordForDelete)
+      // Pass clean string currentUsername
+      await deleteAccount(currentUsername, currentPasswordForDelete)
       onClose()
       onLogout()
     } catch (err) {

@@ -7,12 +7,10 @@ import MainPage from './pages/MainPage'
 function App() {
   const [currentPage, setCurrentPage] = useState('landing')
   const [authMode, setAuthMode] = useState(null)
-  const [loggedUser, setLoggedUser] = useState('John Doe')
+  const [loggedUser, setLoggedUser] = useState(null) // Safe default
 
   const handleAuthSuccess = (userData) => {
-    // userData is { id: 1, username: "..." }
-    console.log('User data on login success:', userData) // Debug log
-    setLoggedUser(userData) // Store whole object (NOT userData.username)
+    setLoggedUser(userData)
     setAuthMode(null)
     setCurrentPage('main')
   }
@@ -22,17 +20,25 @@ function App() {
     setCurrentPage('landing')
   }
 
+  // --- ADD THIS FUNCTION: Update username while preserving user id object structure ---
+  const handleUsernameChanged = (newUsername) => {
+    setLoggedUser((prev) => {
+      if (typeof prev === 'object' && prev !== null) {
+        return { ...prev, username: newUsername }
+      }
+      return { username: newUsername }
+    })
+  }
+  // -----------------------------------------------------------------------------------
+
   return (
     <div className="liquidViewport">
       <Navbar
         currentPage={currentPage}
         onNavigate={setCurrentPage}
         onOpenAuth={setAuthMode}
-        onLogout={() => {
-          setLoggedUser(null)
-          setCurrentPage('landing')
-        }}
-        loggedUser={loggedUser?.username || ''}
+        onLogout={handleLogout}
+        loggedUser={loggedUser?.username || (typeof loggedUser === 'string' ? loggedUser : '')}
       />
 
       {currentPage === 'landing' ? (
@@ -40,7 +46,7 @@ function App() {
       ) : (
         <MainPage
           loggedUser={loggedUser}
-          onUsernameChanged={setLoggedUser}
+          onUsernameChanged={handleUsernameChanged}
           onLogout={handleLogout}
         />
       )}

@@ -49,7 +49,7 @@ function formatTimeAgo(dateString) {
   if (diffInMinutes < 60) return `${diffInMinutes}m ago`
   const diffInHours = Math.floor(diffInMinutes / 60)
   if (diffInHours < 24) return `${diffInHours}h ago`
-  const diffInDays = Math.floor(diffInHours / 24)
+  const diffInDays = Math.floor(diffInDays / 24)
   if (diffInDays < 7) return `${diffInDays}d ago`
 
   return past.toLocaleDateString(undefined, {
@@ -67,6 +67,10 @@ export default function CommunityModal({
 }) {
   const [view, setView] = useState(initialView)
   const [selectedCategory, setSelectedCategory] = useState(initialCategory)
+
+  // Safely extract username and id whether currentUser is an object or string
+  const currentUsername = typeof currentUser === 'object' ? currentUser?.username : currentUser
+  const currentUserId = currentUser?.id || currentUser?.user_id
 
   // New post form state
   const [newTitle, setNewTitle] = useState('')
@@ -156,7 +160,8 @@ export default function CommunityModal({
     setCreatePostError('')
     setPosting(true)
     try {
-      await submitPost(newTitle, newContent, currentUser, newCategory, newEventDate, newEventLocation)
+      // Pass clean username string to API
+      await submitPost(newTitle, newContent, currentUsername, newCategory, newEventDate, newEventLocation)
       setNewTitle('')
       setNewContent('')
       setNewEventDate('')
@@ -173,7 +178,8 @@ export default function CommunityModal({
   const handleSavePostEdit = async (e) => {
     e.preventDefault()
     try {
-      await editPost(activePost.id, editPostTitle, editPostContent, currentUser)
+      // Pass clean username string to API
+      await editPost(activePost.id, editPostTitle, editPostContent, currentUsername)
       setIsEditingPost(false)
     } catch (err) {
       alert(err.message)
@@ -183,7 +189,8 @@ export default function CommunityModal({
   // Handle post delete without browser confirm popup
   const handleConfirmDeletePost = async () => {
     try {
-      await removePost(activePost.id, currentUser)
+      // Pass clean username string to API
+      await removePost(activePost.id, currentUsername)
       setIsDeletingPost(false)
       setView('list')
     } catch (err) {
@@ -197,7 +204,8 @@ export default function CommunityModal({
     setCommenting(true)
     try {
       const parentId = replyingTo ? replyingTo.id : null
-      await submitComment(activePost.id, commentText, currentUser, parentId)
+      // Pass clean username string to API
+      await submitComment(activePost.id, commentText, currentUsername, parentId)
       setCommentText('')
       setReplyingTo(null)
     } catch (err) {
@@ -209,7 +217,8 @@ export default function CommunityModal({
 
   const handleSaveCommentEdit = async (commentId) => {
     try {
-      await editComment(activePost.id, commentId, editingCommentText, currentUser)
+      // Pass clean username string to API
+      await editComment(activePost.id, commentId, editingCommentText, currentUsername)
       setEditingCommentId(null)
     } catch (err) {
       alert(err.message)
@@ -219,7 +228,8 @@ export default function CommunityModal({
   // Handle comment delete without browser confirm popup
   const handleConfirmDeleteComment = async (commentId) => {
     try {
-      await removeComment(activePost.id, commentId, currentUser)
+      // Pass clean username string to API
+      await removeComment(activePost.id, commentId, currentUsername)
       setDeletingCommentId(null)
     } catch (err) {
       alert(err.message)
@@ -251,6 +261,12 @@ export default function CommunityModal({
       threadRepliesMap[rootId].push(c)
     }
   })
+
+  // Author verification checks supporting both user_id and case-insensitive username
+  const isPostAuthor = activePost && (
+    (currentUserId && activePost.user_id && Number(currentUserId) === Number(activePost.user_id)) ||
+    (currentUsername && activePost.author && currentUsername.toLowerCase() === activePost.author.toLowerCase())
+  )
 
   const currentPlaceholder = CATEGORY_PLACEHOLDERS[newCategory] || CATEGORY_PLACEHOLDERS.general
 
@@ -396,7 +412,7 @@ export default function CommunityModal({
                       </div>
 
                       {/* Post Author Action Buttons (with inline delete confirm) */}
-                      {currentUser && currentUser === activePost.author && !isEditingPost && (
+                      {isPostAuthor && !isEditingPost && (
                         isDeletingPost ? (
                           <div className="inlineConfirmGroup">
                             <span className="confirmLabel">Delete post?</span>
@@ -484,7 +500,11 @@ export default function CommunityModal({
                       ) : (
                         rootComments.map((rootComment) => {
                           const replies = threadRepliesMap[rootComment.id] || []
-                          const isRootAuthor = currentUser && currentUser === rootComment.author
+                          // Check root comment author safely
+                          const isRootAuthor = (
+                            (currentUserId && rootComment.user_id && Number(currentUserId) === Number(rootComment.user_id)) ||
+                            (currentUsername && rootComment.author && currentUsername.toLowerCase() === rootComment.author.toLowerCase())
+                          )
 
                           return (
                             <div key={rootComment.id} className="commentThreadBlock">
@@ -582,7 +602,11 @@ export default function CommunityModal({
                                   {replies.map((reply) => {
                                     const parentComment = commentsById[reply.parent_id]
                                     const repliedToAuthor = parentComment ? parentComment.author : null
-                                    const isReplyAuthor = currentUser && currentUser === reply.author
+                                    // Check reply author safely
+                                    const isReplyAuthor = (
+                                      (currentUserId && reply.user_id && Number(currentUserId) === Number(reply.user_id)) ||
+                                      (currentUsername && reply.author && currentUsername.toLowerCase() === reply.author.toLowerCase())
+                                    )
 
                                     return (
                                       <div key={reply.id} className="communityCommentCard replyCard">

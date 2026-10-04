@@ -5,6 +5,8 @@ class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
     author = db.Column(db.String(100), nullable=False)
+    # Foreign key referencing User table ID
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     # Post foreign key
@@ -14,11 +16,12 @@ class Comment(db.Model):
     parent_id = db.Column(db.Integer, db.ForeignKey('comment.id'), nullable=True)
 
     @staticmethod
-    def add_comment(post_id, content, author, parent_id=None):
+    def add_comment(post_id, content, author, user_id=None, parent_id=None):
         new_comment = Comment(
             post_id=post_id,
             content=content,
             author=author,
+            user_id=user_id,
             parent_id=parent_id
         )
         db.session.add(new_comment)
@@ -47,5 +50,6 @@ class Comment(db.Model):
             "parent_id": self.parent_id,
             "content": self.content,
             "author": self.author,
+            "user_id": self.user_id, # Added user_id for authoritative ownership check
             "created_at": self.created_at.isoformat() + "Z"
         }
