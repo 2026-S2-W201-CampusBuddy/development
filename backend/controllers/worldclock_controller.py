@@ -1,6 +1,6 @@
 # This file is like a "Chef" — it turns a list of requested timezones
 # into a combined, ready-to-use response.
-from models.worldclock_model import WorldClockModel
+from models.worldclock_model import WorldClockModel, CitySearchModel
 
 AUCKLAND_TZ = "Pacific/Auckland"
 
@@ -23,4 +23,13 @@ def get_world_clock_logic(requested_zones):
             "zones": results,
             "usedFallback": any_fallback,
         },
+    }
+
+
+def search_cities_logic(query):
+    results = CitySearchModel.search(query)
+    return {
+        "status": "success",
+        "message": "City search results",
+        "data": {"results": results},
     }

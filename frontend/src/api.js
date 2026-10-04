@@ -93,6 +93,11 @@ export async function getWorldClockTimes(zones) {
   return handleResponse(response)
 }
 
+export async function searchWorldClockCities(query) {
+  const response = await fetch(`${BASE_URL}/api/worldclock/cities?search=${encodeURIComponent(query)}`)
+  return handleResponse(response)
+}
+
 export async function getRentAreas() {
   const response = await fetch(`${BASE_URL}/api/rent/areas`)
   return handleResponse(response)

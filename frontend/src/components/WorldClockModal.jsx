@@ -10,6 +10,7 @@ export default function WorldClockModal({ isOpen, onClose }) {
     searchTerm,
     setSearchTerm,
     searchResults,
+    isSearching,
     addCity,
     removeCity,
     usedFallback,
@@ -108,13 +109,16 @@ export default function WorldClockModal({ isOpen, onClose }) {
             </span>
 
             <div className="wcPickerList">
-              {listToShow.map((city) => (
+              {searchTerm.trim() && isSearching && (
+                <p className="weatherStatusText">Searching...</p>
+              )}
+              {!(searchTerm.trim() && isSearching) && listToShow.map((city) => (
                 <button key={city.id} className="wcPickerOption" onClick={() => handleAdd(city)}>
                   <span>{city.label}</span>
                   <span className="wcPickerCountry">{city.country}</span>
                 </button>
               ))}
-              {listToShow.length === 0 && (
+              {!(searchTerm.trim() && isSearching) && listToShow.length === 0 && (
                 <p className="weatherStatusText">
                   {searchTerm.trim() ? 'No matching city found.' : "You've added every suggested city."}
                 </p>

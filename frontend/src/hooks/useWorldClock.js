@@ -1,19 +1,15 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
-import { getWorldClockTimes } from '../api'
-import ZONE_TO_COUNTRY from './zoneCountryData'
+import { getWorldClockTimes, searchWorldClockCities } from '../api'
 
 const STORAGE_KEY = 'campusbuddy_world_clock_cities'
 const AUCKLAND_TZ = 'Pacific/Auckland'
+const SEARCH_DEBOUNCE_MS = 300
 
 // A curated shortlist for AUT/Auckland's international student population —
 // shown as quick suggestions before the user starts typing a search.
-//
-// IMPORTANT: several countries only have ONE official timezone for the
-// entire country (e.g. all of India uses Asia/Kolkata, all of China uses
-// Asia/Shanghai). That means two genuinely different cities below can
-// share the same `tz` value on purpose — that is correct, real-world
-// behaviour, not a mistake. Because of this, cities must never be treated
-// as "the same" just because their tz matches; see `makeCityId` below.
+// Searching any OTHER city now goes through the backend's GeoNames-backed
+// search (see searchWorldClockCities in api.js), which covers every real
+// city worldwide with population 15,000+ — not just this shortlist.
 export const SUGGESTED_CITIES = [
   { label: 'Beijing', country: 'China', tz: 'Asia/Shanghai' },
   { label: 'Shanghai', country: 'China', tz: 'Asia/Shanghai' },
@@ -41,44 +37,11 @@ export const SUGGESTED_CITIES = [
   { label: 'Vancouver', country: 'Canada', tz: 'America/Vancouver' },
 ]
 
-// A small fallback list, only used if a browser doesn't support
-// Intl.supportedValuesOf (older Safari) — search still works, just
-// across fewer zones instead of the full IANA database. This is purely
-// for the city SEARCH/PICKER list — it has nothing to do with how the
-// live time itself is fetched (that now always goes through our backend).
-const FALLBACK_ZONES = [
-  ...new Set(SUGGESTED_CITIES.map((c) => c.tz)),
-  'Europe/Paris', 'Europe/Berlin', 'Europe/Madrid', 'Europe/Rome', 'Europe/Amsterdam',
-  'Europe/Moscow', 'Africa/Cairo', 'Africa/Lagos', 'Africa/Johannesburg',
-  'America/Sao_Paulo', 'America/Mexico_City', 'Pacific/Fiji',
-]
-
-function getAllTimeZones() {
-  try {
-    return Intl.supportedValuesOf('timeZone')
-  } catch {
-    return FALLBACK_ZONES
-  }
-}
-
 // A city's real identity is the COMBINATION of its name and timezone —
 // never the timezone alone, since many distinct real cities intentionally
-// share one timezone (this is what caused the earlier New Delhi/Mumbai bug).
+// share one timezone (e.g. all of India uses Asia/Kolkata).
 function makeCityId(label, tz) {
   return `${tz}::${label}`
-}
-
-// Turns a raw IANA zone id like "Africa/Accra" into a readable city name
-// ("Accra") and its REAL country ("Ghana") — sourced from actual IANA/CLDR
-// timezone data (ZONE_TO_COUNTRY), not a guess based on the zone's region
-// prefix. Every one of the 418 zones the browser knows about has a real
-// country entry here, so search results always show the correct country,
-// not "Africa" or "Europe" as a placeholder.
-function formatZoneAsCity(tz) {
-  const parts = tz.split('/')
-  const cityPart = parts[parts.length - 1].replace(/_/g, ' ')
-  const country = ZONE_TO_COUNTRY[tz] || parts[0].replace(/_/g, ' ')
-  return { label: cityPart, country, tz, id: makeCityId(cityPart, tz) }
 }
 
 function withId(city) {
@@ -100,8 +63,6 @@ function saveCities(cities) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(cities))
 }
 
-// Converts the API's 24-hour "HH:MM" string into a friendly 12-hour
-// display, e.g. "14:30" -> "2:30 pm".
 function formatAs12Hour(time24) {
   if (!time24) return '--:--'
   const [hourStr, minuteStr] = time24.split(':')
@@ -116,8 +77,6 @@ function getHour24(time24) {
   return parseInt(time24.split(':')[0], 10)
 }
 
-// Compares two "MM/DD/YYYY" date strings (as returned by our backend) to
-// work out whether a city is a day ahead or behind Auckland right now.
 function getDayOffsetLabel(aucklandDate, cityDate) {
   if (!aucklandDate || !cityDate || aucklandDate === cityDate) return null
   const [aMonth, aDay, aYear] = aucklandDate.split('/').map(Number)
@@ -134,20 +93,41 @@ function getCallFriendlinessNote(hour) {
   return { text: 'Likely asleep', tone: 'poor' }
 }
 
+// Computes a city's time RIGHT NOW using the browser's own timezone
+// database — zero network latency. Used the instant a city is added, so
+// it appears immediately instead of showing "--:--" until the next live
+// API refresh completes. The periodic backend refresh (every 30s) then
+// reconciles with the authoritative live-API time in the background; the
+// two should always agree, since both ultimately reflect the same real
+// time for that zone.
+function computeInstantTimeData(tz) {
+  try {
+    const now = new Date()
+    const time = new Intl.DateTimeFormat('en-NZ', {
+      timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false,
+    }).format(now)
+    const date = new Intl.DateTimeFormat('en-US', {
+      timeZone: tz, month: '2-digit', day: '2-digit', year: 'numeric',
+    }).format(now)
+    return { tz, time, date, source: 'instant' }
+  } catch {
+    return null
+  }
+}
+
 export default function useWorldClock() {
   const [savedCities, setSavedCitiesRaw] = useState(loadSavedCities)
   const [searchTerm, setSearchTerm] = useState('')
+  const [searchResults, setSearchResults] = useState([])
+  const [isSearching, setIsSearching] = useState(false)
   const [liveTimes, setLiveTimes] = useState({}) // tz -> { time, date, dayOfWeek, dstActive, source }
   const [isLoadingTimes, setIsLoadingTimes] = useState(true)
   const [usedFallback, setUsedFallback] = useState(false)
   const isMounted = useRef(true)
-
-  const allZones = useMemo(() => getAllTimeZones(), [])
+  const searchDebounceRef = useRef(null)
+  const searchRequestIdRef = useRef(0)
 
   const savedIdSet = useMemo(() => new Set(savedCities.map((c) => c.id)), [savedCities])
-  // De-duplicated list of timezones actually needed, e.g. if the user has
-  // saved both New Delhi and Mumbai, we only need to ask the backend for
-  // Asia/Kolkata once.
   const zonesToFetch = useMemo(
     () => [...new Set(savedCities.map((c) => c.tz))],
     [savedCities]
@@ -158,12 +138,14 @@ export default function useWorldClock() {
     getWorldClockTimes(zonesToFetch)
       .then((json) => {
         if (!isMounted.current) return
-        setLiveTimes(json.data.zones)
+        // Merge rather than replace: keeps any "instant" client-computed
+        // times visible until the live-API values for them arrive, instead
+        // of briefly wiping everything on every refresh cycle.
+        setLiveTimes((prev) => ({ ...prev, ...json.data.zones }))
         setUsedFallback(json.data.usedFallback)
       })
       .catch(() => {
-        // Backend itself unreachable (e.g. Flask not running) — leave
-        // whatever times we last had rather than clearing the screen
+        // Backend itself unreachable — leave whatever times we last had
       })
       .finally(() => {
         if (isMounted.current) setIsLoadingTimes(false)
@@ -179,12 +161,21 @@ export default function useWorldClock() {
 
   useEffect(() => {
     fetchLiveTimes()
-    const timer = setInterval(fetchLiveTimes, 1000 * 30) // refresh every 30s
+    const timer = setInterval(fetchLiveTimes, 1000 * 30)
     return () => clearInterval(timer)
   }, [fetchLiveTimes])
 
   const addCity = useCallback((city) => {
     const cityWithId = withId(city)
+
+    // Show a real, correct time for this city IMMEDIATELY — computed
+    // right here in the browser, no network round trip — so there's no
+    // visible delay before the user sees a time appear.
+    const instant = computeInstantTimeData(cityWithId.tz)
+    if (instant) {
+      setLiveTimes((prev) => ({ ...prev, [cityWithId.tz]: instant }))
+    }
+
     setSavedCitiesRaw((prev) => {
       if (prev.some((c) => c.id === cityWithId.id)) return prev // no duplicates, by city+timezone
       const next = [...prev, cityWithId]
@@ -201,38 +192,47 @@ export default function useWorldClock() {
     })
   }, [])
 
-  // Search results: matches on city name, real country name, or raw zone
-  // id — covers the full IANA database (418 zones, each with its correct
-  // country from ZONE_TO_COUNTRY), plus the curated shortlist for names
-  // that differ from the browser's canonical zone name (e.g. "Ho Chi Minh"
-  // vs the canonical "Asia/Saigon").
-  const searchResults = useMemo(() => {
-    const term = searchTerm.trim().toLowerCase()
-    if (!term) return []
+  // Debounced backend search — waits for the user to pause typing before
+  // calling the GeoNames-backed endpoint, so every keystroke doesn't fire
+  // a separate request. searchRequestIdRef guards against an older, slower
+  // request overwriting a newer one's results if they resolve out of order.
+  useEffect(() => {
+    const term = searchTerm.trim()
 
-    const fromSuggested = SUGGESTED_CITIES.filter(
-      (c) => c.label.toLowerCase().includes(term) || c.country.toLowerCase().includes(term)
-    ).map(withId)
+    if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current)
 
-    const fromZoneDb = allZones
-      .filter((tz) => {
-        const cityName = tz.toLowerCase().replace(/_/g, ' ')
-        const countryName = (ZONE_TO_COUNTRY[tz] || '').toLowerCase()
-        return (
-          tz.toLowerCase().includes(term.replace(/\s+/g, '_')) ||
-          cityName.includes(term) ||
-          countryName.includes(term)
-        )
-      })
-      .map(formatZoneAsCity)
+    if (!term) {
+      setSearchResults([])
+      setIsSearching(false)
+      return
+    }
 
-    const merged = [...fromSuggested]
-    fromZoneDb.forEach((city) => {
-      if (!merged.some((c) => c.id === city.id)) merged.push(city)
-    })
+    setIsSearching(true)
+    const thisRequestId = ++searchRequestIdRef.current
 
-    return merged.slice(0, 40)
-  }, [searchTerm, allZones])
+    searchDebounceRef.current = setTimeout(() => {
+      searchWorldClockCities(term)
+        .then((json) => {
+          if (!isMounted.current) return
+          if (thisRequestId !== searchRequestIdRef.current) return // a newer search superseded this one
+          setSearchResults(json.data.results.map(withId))
+        })
+        .catch(() => {
+          if (isMounted.current && thisRequestId === searchRequestIdRef.current) {
+            setSearchResults([])
+          }
+        })
+        .finally(() => {
+          if (isMounted.current && thisRequestId === searchRequestIdRef.current) {
+            setIsSearching(false)
+          }
+        })
+    }, SEARCH_DEBOUNCE_MS)
+
+    return () => {
+      if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current)
+    }
+  }, [searchTerm])
 
   const suggestedToShow = SUGGESTED_CITIES.map(withId).filter((c) => !savedIdSet.has(c.id))
 
@@ -257,6 +257,7 @@ export default function useWorldClock() {
     searchTerm,
     setSearchTerm,
     searchResults,
+    isSearching,
     addCity,
     removeCity,
     isLoadingTimes,

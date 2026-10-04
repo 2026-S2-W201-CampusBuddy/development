@@ -12,9 +12,61 @@
 import requests
 from datetime import datetime
 from zoneinfo import ZoneInfo
+from geonamescache import GeonamesCache
 
 TIMEAPI_URL = "https://timeapi.io/api/time/current/zone"
 REQUEST_TIMEOUT_SECONDS = 3
+
+# geonamescache bundles a real GeoNames data dump (cities with population
+# 15,000+, ~34,000 cities covering every country) as installed package
+# data — no download or API key needed, and no network call at request
+# time. Loaded once, at import time, and kept in memory: searching 34,000
+# small dicts in Python is sub-millisecond, so no database table is needed
+# for this. Each city already has its own real timezone and country code
+# from GeoNames directly — no more guessing a country from a timezone name.
+_gc = GeonamesCache()
+_COUNTRIES_BY_CODE = _gc.get_countries()
+_ALL_CITIES = list(_gc.get_cities().values())
+
+
+def _country_name(country_code):
+    country = _COUNTRIES_BY_CODE.get(country_code)
+    return country["name"] if country else country_code
+
+
+class CitySearchModel:
+    @staticmethod
+    def search(query, limit=20):
+        term = query.strip().lower()
+        if not term:
+            return []
+
+        matches = []
+        for city in _ALL_CITIES:
+            name_lower = city["name"].lower()
+            country_name_lower = _country_name(city["countrycode"]).lower()
+            alt_names_lower = [a.lower() for a in city.get("alternatenames", [])]
+
+            if (
+                term in name_lower
+                or term in country_name_lower
+                or any(term in alt for alt in alt_names_lower)
+            ):
+                matches.append(city)
+
+        # Largest/most well-known cities first — makes the right result
+        # easy to find when several places share a name (e.g. "Manchester")
+        matches.sort(key=lambda c: c["population"], reverse=True)
+
+        return [
+            {
+                "label": city["name"],
+                "country": _country_name(city["countrycode"]),
+                "tz": city["timezone"],
+                "population": city["population"],
+            }
+            for city in matches[:limit]
+        ]
 
 
 class WorldClockModel:

@@ -1,8 +1,21 @@
 # This file is like a "Waiter" who handles the world clock web address
 from flask import Blueprint, jsonify, request
-from controllers.worldclock_controller import get_world_clock_logic
+from controllers.worldclock_controller import get_world_clock_logic, search_cities_logic
 
 worldclock_bp = Blueprint('worldclock', __name__, url_prefix='/api')
+
+
+@worldclock_bp.route('/worldclock/cities', methods=['GET'])
+def search_cities():
+    query = request.args.get('search', '')
+    try:
+        result = search_cities_logic(query)
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": f"Could not search cities: {str(e)}"
+        }), 500
 
 
 @worldclock_bp.route('/worldclock', methods=['GET'])
