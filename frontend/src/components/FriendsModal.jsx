@@ -12,12 +12,16 @@ export default function FriendsModal({ isOpen, onClose, currentUser }) {
   const [alertType, setAlertType] = useState('info') // 'info' | 'error' | 'success'
   const [friendToRemove, setFriendToRemove] = useState(null)
 
-  const currentUserId = currentUser?.id || currentUser?.user_id
+  // Safely extract current user ID from multiple possible structures
+  const currentUserId = 
+    currentUser?.id || 
+    currentUser?.user_id || 
+    currentUser?.data?.id || 
+    currentUser?.data?.user_id
 
   // Fetch count and lists whenever modal opens or current user changes
   useEffect(() => {
     if (isOpen && currentUserId) {
-      // Fetch both pending requests and friends list immediately on open
       fetchPendingRequests()
       fetchFriendsList()
     }
@@ -57,11 +61,20 @@ export default function FriendsModal({ isOpen, onClose, currentUser }) {
   }
 
   const handleSendRequest = async (receiverId) => {
+    // Guard against missing sender id
+    if (!currentUserId) {
+      showAlert('User session not found. Please log in again.', 'error')
+      return
+    }
+
     try {
       const res = await fetch('/api/friends/request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sender_id: currentUserId, receiver_id: receiverId })
+        body: JSON.stringify({ 
+          sender_id: Number(currentUserId), 
+          receiver_id: Number(receiverId) 
+        })
       })
       const data = await res.json()
 
@@ -69,6 +82,10 @@ export default function FriendsModal({ isOpen, onClose, currentUser }) {
         showAlert(data.message || 'Error sending request', 'error')
       } else {
         showAlert('Friend request sent!', 'success')
+        // Optimistically update the UI to pending
+        setSearchResults((prev) =>
+          prev.map((item) => (item.id === receiverId ? { ...item, status: 'pending_sent' } : item))
+        )
       }
     } catch (err) {
       showAlert('Failed to send request', 'error')
@@ -76,10 +93,11 @@ export default function FriendsModal({ isOpen, onClose, currentUser }) {
   }
 
   const fetchPendingRequests = async () => {
+    if (!currentUserId) return
     try {
       const res = await fetch(`/api/friends/requests/pending?user_id=${currentUserId}`)
       const data = await res.json()
-      setPendingRequests(data)
+      setPendingRequests(Array.isArray(data) ? data : [])
     } catch (err) {
       console.error(err)
     }
@@ -103,10 +121,11 @@ export default function FriendsModal({ isOpen, onClose, currentUser }) {
   }
 
   const fetchFriendsList = async () => {
+    if (!currentUserId) return
     try {
       const res = await fetch(`/api/friends?user_id=${currentUserId}`)
       const data = await res.json()
-      setFriendsList(data)
+      setFriendsList(Array.isArray(data) ? data : [])
     } catch (err) {
       console.error(err)
     }
@@ -114,7 +133,7 @@ export default function FriendsModal({ isOpen, onClose, currentUser }) {
 
   // When removing a friend, refresh both list and requests count
   const confirmRemoveFriend = async () => {
-    if (!friendToRemove) return
+    if (!friendToRemove || !currentUserId) return
     try {
       await fetch(`/api/friends/${friendToRemove.id}?user_id=${currentUserId}`, {
         method: 'DELETE'
@@ -232,13 +251,7 @@ export default function FriendsModal({ isOpen, onClose, currentUser }) {
                           {(!u.status || u.status === 'none') && (
                             <button 
                               className="btnAction primary" 
-                              onClick={() => {
-                                handleSendRequest(u.id)
-                                // Optimistically mark as pending
-                                setSearchResults((prev) =>
-                                  prev.map((item) => (item.id === u.id ? { ...item, status: 'pending_sent' } : item))
-                                )
-                              }}
+                              onClick={() => handleSendRequest(u.id)}
                             >
                               Add Friend
                             </button>

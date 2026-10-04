@@ -10,7 +10,9 @@ function App() {
   const [loggedUser, setLoggedUser] = useState('John Doe')
 
   const handleAuthSuccess = (userData) => {
-    setLoggedUser(userData.username)
+    // userData is { id: 1, username: "..." }
+    console.log('User data on login success:', userData) // Debug log
+    setLoggedUser(userData) // Store whole object (NOT userData.username)
     setAuthMode(null)
     setCurrentPage('main')
   }
@@ -26,8 +28,11 @@ function App() {
         currentPage={currentPage}
         onNavigate={setCurrentPage}
         onOpenAuth={setAuthMode}
-        onLogout={handleLogout}
-        loggedUser={loggedUser}
+        onLogout={() => {
+          setLoggedUser(null)
+          setCurrentPage('landing')
+        }}
+        loggedUser={loggedUser?.username || ''}
       />
 
       {currentPage === 'landing' ? (
