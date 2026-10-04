@@ -15,16 +15,22 @@ class User(db.Model):
     is_verified = db.Column(db.Boolean, default=False)
     verification_code = db.Column(db.String(6))
     verification_code_expires = db.Column(db.DateTime)
+    # Required acceptance of Terms & Conditions before an account can be
+    # created — added because features like Peer Review make ratings
+    # visible to other group members, so users need to knowingly agree
+    # to that up front.
+    agreed_to_terms = db.Column(db.Boolean, default=False)
 
     @staticmethod
-    def create_user(username, email, password):
+    def create_user(username, email, password, agreed_to_terms=False):
         hashed_password = generate_password_hash(password)
         new_user = User(
             username=username,
             email=email,
             password_hash=hashed_password,
             preferred_location='Auckland CBD',
-            is_verified=False
+            is_verified=False,
+            agreed_to_terms=agreed_to_terms
         )
         db.session.add(new_user)
         db.session.commit()

@@ -6,9 +6,12 @@ from datetime import datetime, timedelta
 def generate_code():
     return str(random.randint(100000, 999999))
 
-def register_logic(username, email, password):
+def register_logic(username, email, password, agreed_to_terms=False):
     if not email.lower().endswith('@autuni.ac.nz'):
         return {"status": "error", "message": "You must sign up with an AUT student email (@autuni.ac.nz)"}, 400
+
+    if not agreed_to_terms:
+        return {"status": "error", "message": "You must accept the Terms and Conditions to create an account"}, 400
 
     if User.find_by_username(username):
         return {"status": "error", "message": "Username already exists"}, 400
@@ -16,7 +19,7 @@ def register_logic(username, email, password):
     if User.find_by_email(email):
         return {"status": "error", "message": "Email already in use"}, 400
 
-    new_user = User.create_user(username, email, password)
+    new_user = User.create_user(username, email, password, agreed_to_terms=True)
 
     code = generate_code()
     expires_at = datetime.utcnow() + timedelta(minutes=15)
