@@ -2,8 +2,16 @@ from models.post_model import Post
 from models.comment_model import Comment
 from extensions import db
 
+# Helper function to extract username if author is passed as dict/object
+def _extract_author_name(author):
+    if isinstance(author, dict):
+        return author.get('username') or 'Anonymous'
+    return str(author) if author else 'Anonymous'
+
 def create_post_logic(title, content, author, category='general', event_date=None, event_location=None):
-    new_post = Post.add_post(title, content, author, category, event_date, event_location)
+    # Safely convert author dict to username string
+    author_str = _extract_author_name(author)
+    new_post = Post.add_post(title, content, author_str, category, event_date, event_location)
     return {
         "status": "success",
         "message": "Post created successfully",
@@ -42,8 +50,9 @@ def update_post_logic(post_id, title, content, author):
             "message": "Post not found"
         }, 404
 
-    # Permission check
-    if post.author != author:
+    author_str = _extract_author_name(author)
+    # Permission check using username string
+    if post.author != author_str:
         return {
             "status": "error",
             "message": "You can only edit your own posts"
@@ -65,8 +74,9 @@ def delete_post_logic(post_id, author):
             "message": "Post not found"
         }, 404
 
-    # Permission check
-    if post.author != author:
+    author_str = _extract_author_name(author)
+    # Permission check using username string
+    if post.author != author_str:
         return {
             "status": "error",
             "message": "You can only delete your own posts"
