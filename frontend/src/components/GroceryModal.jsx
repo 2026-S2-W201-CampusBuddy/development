@@ -14,7 +14,7 @@ export default function GroceryModal({ isOpen, onClose, currentUser }) {
   // 1. Load user's saved preferred location from backend when modal opens
   useEffect(() => {
     if (isOpen && currentUser) {
-      fetch(`http://127.0.0.1:5000/api/user/location/${currentUser}`)
+      fetch(`/api/user/location/${currentUser}`)
         .then(res => res.json())
         .then(data => {
           if (data.preferred_location) {
@@ -30,7 +30,7 @@ export default function GroceryModal({ isOpen, onClose, currentUser }) {
     if (isOpen) {
       set_loading(true)
       set_selected_store(null)
-      fetch(`http://127.0.0.1:5000/api/groceries?location=${encodeURIComponent(current_location)}`)
+      fetch(`/api/groceries?location=${encodeURIComponent(current_location)}`)
         .then(res => res.json())
         .then(data => {
           if (data.stores) {
@@ -78,7 +78,7 @@ export default function GroceryModal({ isOpen, onClose, currentUser }) {
 
     set_is_saving(true)
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/user/location', {
+      const response = await fetch('/api/user/location', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: currentUser, location: current_location })
