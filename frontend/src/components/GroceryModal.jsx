@@ -11,10 +11,13 @@ export default function GroceryModal({ isOpen, onClose, currentUser }) {
   const [is_saving, set_is_saving] = useState(false)
   const [save_message, set_save_message] = useState('')
 
+  // Safely extract username string whether currentUser is a string or an object
+  const valid_username = typeof currentUser === 'object' ? currentUser?.username : currentUser
+
   // 1. Load user's saved preferred location from backend when modal opens
   useEffect(() => {
-    if (isOpen && currentUser) {
-      fetch(`/api/user/location/${currentUser}`)
+    if (isOpen && valid_username) {
+      fetch(`/api/user/location/${encodeURIComponent(valid_username)}`)
         .then(res => res.json())
         .then(data => {
           if (data.preferred_location) {
@@ -23,7 +26,7 @@ export default function GroceryModal({ isOpen, onClose, currentUser }) {
         })
         .catch(err => console.error("Failed to load preferred location:", err))
     }
-  }, [isOpen, currentUser])
+  }, [isOpen, valid_username])
 
   // 2. Fetch real grocery stores from Flask backend whenever current_location changes
   useEffect(() => {
@@ -71,7 +74,7 @@ export default function GroceryModal({ isOpen, onClose, currentUser }) {
 
   // Save current location to SQLite database
   const handle_save_location = async () => {
-    if (!currentUser) {
+    if (!valid_username) {
       alert("Please log in to save your preferred location.")
       return
     }
@@ -81,7 +84,7 @@ export default function GroceryModal({ isOpen, onClose, currentUser }) {
       const response = await fetch('/api/user/location', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: currentUser, location: current_location })
+        body: JSON.stringify({ username: valid_username, location: current_location })
       })
       const data = await response.json()
       if (data.success) {
@@ -140,23 +143,23 @@ export default function GroceryModal({ isOpen, onClose, currentUser }) {
             
             {/* Left Column: Interactive Map */}
             <div className="groceryMapPane">
-            {selected_store && (
-              <div className="mapFloatingResetBadge">
-                <span>📍 {selected_store.name}</span>
-                <button className="floatingResetBtn" onClick={() => set_selected_store(null)}>
-                  ✕ Show All
-                </button>
-              </div>
-            )}
-            <iframe
-              src={map_embed_url}
-              title="Google Map Groceries"
-              className="groceryMapFrame"
-              allowFullScreen=""
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
-          </div>
+              {selected_store && (
+                <div className="mapFloatingResetBadge">
+                  <span>📍 {selected_store.name}</span>
+                  <button className="floatingResetBtn" onClick={() => set_selected_store(null)}>
+                    ✕ Show All
+                  </button>
+                </div>
+              )}
+              <iframe
+                src={map_embed_url}
+                title="Google Map Groceries"
+                className="groceryMapFrame"
+                allowFullScreen=""
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
 
             {/* Right Column: Scrollable Supermarket List */}
             <div className="groceryListPane">
