@@ -19,7 +19,6 @@
   background: var(--glassSurface);
   border: 1px solid var(--glassBorder);
   backdrop-filter: var(--glassBlur);
-  -webkit-backdrop-filter: var(--glassBlur);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35), inset 0 1px 1px var(--glassHighlight);
   padding: 22px 24px;
   display: flex;
