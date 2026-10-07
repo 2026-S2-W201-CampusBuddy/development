@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import './Carousel.css'
 
-export default function Carousel({ features }) {
+export default function Carousel({ features, onActionClick }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
 
@@ -46,8 +46,15 @@ export default function Carousel({ features }) {
               <p className="cardDescription">{feature.desc}</p>
             </div>
             <div className="cardBottomRow">
-              <span>{feature.action}</span>
-              <span>Active Showcase</span>
+              <button
+                className="cardActionLink"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onActionClick()
+                }}
+              >
+                {feature.action}
+              </button>
             </div>
           </div>
         ))}
