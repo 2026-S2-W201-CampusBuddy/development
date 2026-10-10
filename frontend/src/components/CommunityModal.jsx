@@ -49,7 +49,7 @@ function formatTimeAgo(dateString) {
   if (diffInMinutes < 60) return `${diffInMinutes}m ago`
   const diffInHours = Math.floor(diffInMinutes / 60)
   if (diffInHours < 24) return `${diffInHours}h ago`
-  const diffInDays = Math.floor(diffInDays / 24)
+  const diffInDays = Math.floor(diffInHours / 24)
   if (diffInDays < 7) return `${diffInDays}d ago`
 
   return past.toLocaleDateString(undefined, {
