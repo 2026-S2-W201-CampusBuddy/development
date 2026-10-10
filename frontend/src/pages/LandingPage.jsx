@@ -1,29 +1,29 @@
 import Carousel from '../components/Carousel'
 import './LandingPage.css'
 
-export default function LandingPage() {
+export default function LandingPage({ onOpenAuth }) {
   const showcaseFeatures = [
-    { id: 0, badge: 'Interactive Map', icon: '📍', title: 'Campus 3D Navigator', desc: 'Explore Auckland City Campus with real-time navigation.', action: 'Launch 3D Map →' },
-    { id: 1, badge: 'Student Feed', icon: '💬', title: 'Peer Community Hub', desc: 'Join study squads and campus social updates in real time.', action: 'View Discussions →' },
-    { id: 2, badge: 'Campus Perks', icon: '🥤', title: 'Smart Marketplace', desc: 'Exclusive discounts on student groceries and textbooks.', action: 'Browse Perks →' },
-    { id: 3, badge: 'Timetable Sync', icon: '📅', title: 'Adaptive Timetable', desc: 'Sync lecture schedules and room locations in one place.', action: 'Check Calendar →' },
-    { id: 4, badge: 'Live Weather', icon: '⛅', title: 'Weather & Status', desc: 'Live temperature, rain alerts, and campus shuttle tracking.', action: 'Current Status →' }
+    { id: 0, badge: 'Interactive Map', icon: '📍', title: 'Campus 3D Navigator', desc: 'Explore AUT Campus in rich detail \.', action: 'Launch 3D Map →' },
+    { id: 1, badge: 'Community', icon: '💬', title: 'Community Hub', desc: 'Discuss important student topics with your peers.', action: 'View Discussions →' },
+    { id: 2, badge: 'Currency Exchange', icon: '💱', title: 'Currency Exchange', desc: 'Exchange international currency rates.', action: 'Convert currencies →' },
+    { id: 3, badge: 'Rental Info', icon: '🏠', title: 'Rental Information', desc: 'View auckland rental prices at a glance.', action: 'View Rentals →' },
+    { id: 4, badge: 'Live Weather', icon: '⛅', title: 'Weather', desc: 'Check live auckland weather conditions.', action: 'Current Weather →' }
   ]
 
   return (
     <main className="heroWrapper">
       <div className="heroPillBadge">
-        <span>✨</span> Next-Gen Student Experience
+        <span>✨</span> A CampusBuddy for the Students of Today.
       </div>
 
       <h1 className="heroHeading">
         Kia Ora, <span>Welcome to CampusBuddy</span>
       </h1>
       <p className="heroSubheading">
-        Your all-in-one ecosystem for navigation, community collaboration, timetables, and campus life.
+        SDP Semester 2 2026
       </p>
 
-      <Carousel features={showcaseFeatures} />
+      <Carousel features={showcaseFeatures} onActionClick={() => onOpenAuth('login')} />
     </main>
   )
 }

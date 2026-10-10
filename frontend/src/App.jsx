@@ -54,7 +54,7 @@ function App() {
       />
 
       {currentPage === 'landing' ? (
-        <LandingPage />
+        <LandingPage onOpenAuth={setAuthMode} />
       ) : (
         <MainPage
           loggedUser={loggedUser}
