@@ -1,0 +1,200 @@
+/* Add / edit form shared by the Calendar and Alerts bubbles */
+.eventForm {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-align: left;
+}
+
+.eventFormHeading {
+  font-family: var(--fontDisplay);
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.eventFormGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+
+.eventFormRow {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.eventFormRow .eventFormGroup {
+  flex: 1 1 140px;
+}
+
+.eventForm .liquidInput {
+  color-scheme: dark; /* dark date/time pickers with visible icons */
+}
+
+.eventForm select.liquidInput option {
+  background: #0d1527;
+  color: #ffffff;
+}
+
+.eventFormNotes {
+  resize: vertical;
+  min-height: 60px;
+  font-family: var(--fontUi);
+}
+
+.eventFormNote {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.eventFormNote.warn {
+  color: #fcd34d;
+  line-height: 1.45;
+}
+
+/* Reminder chips */
+.eventFormChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.eventFormChip {
+  padding: 7px 13px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 13px;
+  font-family: var(--fontUi);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.eventFormChip:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.eventFormChip.on {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: rgba(56, 189, 248, 0.7);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.eventFormCustom {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.eventForm .eventFormCustomAmount {
+  width: 96px;
+}
+
+.eventForm .eventFormCustomUnit {
+  width: 112px;
+}
+
+.eventFormCustom .btnGlass {
+  padding: 8px 16px;
+  font-size: 13px;
+}
+
+/* Colour swatches */
+.eventFormSwatches {
+  display: flex;
+  gap: 10px;
+}
+
+.eventFormSwatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  opacity: 0.75;
+  transition: all 0.18s ease;
+}
+
+.eventFormSwatch:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.eventFormSwatch.on {
+  opacity: 1;
+  border-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.18);
+}
+
+/* Notification hint */
+.eventFormPushHint {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  font-size: 13px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.eventFormPushHint.ok {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.35);
+  color: #6ee7b7;
+}
+
+.eventFormPushHint .btnGlass {
+  padding: 7px 16px;
+  font-size: 13px;
+}
+
+.eventFormError {
+  padding: 9px 13px;
+  border-radius: 10px;
+  background: rgba(248, 113, 113, 0.14);
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  color: #fca5a5;
+  font-size: 13px;
+}
+
+.eventFormActions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding-top: 4px;
+}
+
+.eventFormActions .btnGlass {
+  padding: 10px 22px;
+  font-size: 14px;
+}
+
+.eventForm .btnGlass:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 720px) {
+  .eventFormActions .btnGlass {
+    flex: 1;
+  }
+  .eventFormPushHint .btnGlass {
+    width: 100%;
+  }
+}

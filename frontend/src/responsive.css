@@ -1,0 +1,366 @@
+/* ==========================================================================
+   CampusBuddy — Responsive layer (tablet + phone)
+   --------------------------------------------------------------------------
+   Imported LAST in main.jsx so it overrides the desktop styles.
+   Every rule lives inside a media query, so the desktop layout is untouched.
+
+   Breakpoints
+   - Scrollable page : max-width 900px, or any touch-first device
+   - Phone layout    : max-width 720px   (orb grid, full-screen modals)
+   - Small phone     : max-width 480px
+   ========================================================================== */
+
+/* ---------- Touch niceties (all devices; no visual change on desktop) ----- */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+button, [role="button"], .watchOrb, .landscapeGlassCard {
+  touch-action: manipulation;           /* no double-tap zoom / 300ms delay */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ==========================================================================
+   1) SCROLLABLE PAGE — tablets, phones, any touch-first device
+   The desktop layout locks the page to the viewport (overflow: hidden).
+   On smaller screens the content is taller than the screen, so let it scroll.
+   ========================================================================== */
+@media (max-width: 900px), (hover: none) and (pointer: coarse) {
+  html {
+    height: auto;
+    min-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  body, #root {
+    height: auto;
+    min-height: 100%;
+    overflow: visible;
+  }
+
+  .liquidViewport {
+    width: 100%;                        /* 100vw would include the scrollbar */
+    height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;                 /* real visible height on mobile */
+    justify-content: flex-start;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+  }
+
+  /* Main hub: centre the orbs in the space under the navbar */
+  .mainHubWrapper {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Modals: never taller than the *visible* screen; scroll inside */
+  .modalBackdrop {
+    padding: max(12px, env(safe-area-inset-top, 0px))
+             max(12px, env(safe-area-inset-right, 0px))
+             max(12px, env(safe-area-inset-bottom, 0px))
+             max(12px, env(safe-area-inset-left, 0px));
+  }
+  .modalDialog {
+    max-height: calc(100dvh - 24px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+  .hubModalBody,
+  .hubModalBody * {
+    overscroll-behavior: contain;
+  }
+}
+
+/* iOS Safari zooms the page when you focus an input with font-size < 16px */
+@media (max-width: 720px), (hover: none) and (pointer: coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+/* ---------- No "stuck" hover states on touch screens ---------------------- */
+@media (hover: none) {
+  .btnGlass:hover {
+    transform: none;
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--glassBorder);
+    box-shadow: inset 0 1px 1px var(--glassHighlight), 0 4px 18px rgba(0, 0, 0, 0.2);
+  }
+  .btnGlass:active {
+    background: rgba(255, 255, 255, 0.18);
+    transform: scale(0.97);
+  }
+  .watchOrb:active {
+    transform: scale(0.94);
+    border-color: var(--accentColor, rgba(255, 255, 255, 0.9));
+  }
+  .modernUserCard:hover { transform: none; }
+}
+
+/* ==========================================================================
+   2) TABLET-ish widths (721–900px): keep the honeycomb, just tighter
+   ========================================================================== */
+@media (min-width: 721px) and (max-width: 900px) {
+  :root {
+    --orbBaseSize: 108px;
+    --orbGap: 18px;
+  }
+  .navbarWrapper { height: 68px; }
+  .instagramFeedGrid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ==========================================================================
+   3) PHONE LAYOUT (≤ 720px)
+   ========================================================================== */
+@media (max-width: 720px) {
+
+  /* Lighter effects = smooth scrolling on phones */
+  :root {
+    --glassBlur: blur(14px) saturate(160%);
+  }
+  .liquidViewport::before,
+  .liquidViewport::after {
+    width: 300px;
+    height: 300px;
+    filter: blur(60px);
+  }
+
+  /* ----- Navbar ----- */
+  .navbarWrapper {
+    height: 64px;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .brandLogo { gap: 8px; min-width: 0; }
+  .brandSymbol { width: 36px; height: 36px; font-size: 18px; border-radius: 11px; }
+  .brandTitle { font-size: 20px; }
+  .navActions { gap: 8px; }
+  .navActions .btnGlass {
+    font-size: 13px;
+    padding: 8px 14px;
+    min-height: 38px;
+    white-space: nowrap;
+  }
+  .userTag {
+    font-size: 13px;
+    margin-right: 0;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* ----- Landing hero ----- */
+  .heroWrapper { padding: 12px 0 24px; }
+  .heroPillBadge {
+    font-size: 12px;
+    padding: 6px 12px;
+    text-align: center;
+    max-width: 100%;
+  }
+  .heroHeading { font-size: clamp(28px, 8vw, 36px); }
+  .heroSubheading { font-size: 14px; margin-bottom: 18px; }
+
+  /* ----- 3D carousel: one big swipeable card ----- */
+  .carouselStage {
+    height: 258px;
+    touch-action: pan-y;               /* vertical scroll OK, horizontal = swipe */
+    perspective: 900px;
+  }
+  .landscapeGlassCard {
+    width: min(420px, 80vw);
+    height: 240px;
+    padding: 18px 18px;
+  }
+  .cardTitle { font-size: 18px; }
+  .posCenter  { transform: translateX(0) translateZ(60px) scale(1); }
+  /* Neighbours are hidden on phones (they bled through the glass) — swipe or tap the dots */
+  .posLeft1   { transform: translateX(-70vw) translateZ(-80px) scale(0.86); opacity: 0; pointer-events: none; }
+  .posRight1  { transform: translateX(70vw)  translateZ(-80px) scale(0.86); opacity: 0; pointer-events: none; }
+  .posLeft2, .posRight2 { opacity: 0; pointer-events: none; }
+  .carouselIndicators { margin-top: 12px; }
+
+  /* ----- Honeycomb → centred 3-column orb grid ----- */
+  .honeycombContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;                   /* last, incomplete row is centred */
+    justify-content: center;
+    align-content: center;
+    gap: 14px;
+    width: 100%;
+    max-width: 440px;
+    padding: 8px 0 20px;
+    transform: none;
+  }
+  .honeycombRow {
+    display: contents;                 /* flatten the 5 rows into one grid */
+    margin: 0;
+  }
+  .watchOrb {
+    width: calc((100% - 28px) / 3);
+    height: auto;
+    aspect-ratio: 1 / 1;
+    transform: none;                   /* ignore fisheye scale + repulsion */
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.32), inset 0 2px 3px var(--glassHighlight);
+  }
+  .watchOrb.isHoveredOrb { transform: none !important; }
+  .orbIcon { font-size: clamp(26px, 8.4vw, 36px); }
+  .orbLabel {
+    font-size: clamp(10.5px, 3vw, 12.5px);
+    line-height: 1.15;
+    white-space: normal;               /* "Currency Exchange" wraps nicely */
+    padding: 0 8px;
+    margin-top: 3px;
+  }
+  .clockOrbTime { font-size: clamp(18px, 5.4vw, 24px); }
+
+  /* ----- Full-screen modals for the big "hub" dialogs ----- */
+  .hubModalDialog.hubModalDialog {
+    width: 100% !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    max-width: none !important;
+    max-height: none !important;
+    border-radius: 0 !important;
+    border-left: 0 !important;
+    border-right: 0 !important;
+  }
+  .hubModalBody.hubModalBody {
+    padding: calc(52px + env(safe-area-inset-top, 0px)) 16px
+             calc(20px + env(safe-area-inset-bottom, 0px));
+  }
+  .hubModalDialog .modalCloseBtn.modalCloseBtn {
+    top: calc(6px + env(safe-area-inset-top, 0px)) !important;
+    right: 6px !important;
+    width: 44px !important;            /* proper thumb-sized target */
+    height: 44px !important;
+    line-height: 44px !important;
+    font-size: 26px !important;
+  }
+
+  /* ----- Small centred dialogs (auth, settings, weather, rent, clock…) ----- */
+  .modalDialog {
+    max-width: 100%;
+    padding: 28px 18px 22px;
+    border-radius: 22px;
+  }
+  .modalHeading { font-size: 22px; }
+  .modalCloseBtn {
+    width: 44px;
+    height: 44px;
+    top: 6px;
+    right: 6px;
+    font-size: 22px;
+  }
+
+  /* ----- Weather ----- */
+  .weatherStatCard { padding: 12px 8px; }
+
+  /* ----- Map ----- */
+  .mapEmbedWrapper { height: 60vh; height: 60dvh; min-height: 280px; }
+
+  /* ----- Events ----- */
+  .instagramFeedGrid {
+    grid-template-columns: 1fr;
+    max-height: none;
+    overflow: visible;
+  }
+
+  /* ----- Groceries: map on top, list underneath ----- */
+  .groceryModalBody.groceryModalBody {
+    max-height: none;
+    overflow-y: auto;
+  }
+  .grocerySplitContainer {
+    flex-direction: column;
+    height: auto;
+    gap: 12px;
+  }
+  .groceryMapPane {
+    flex: 0 0 auto;
+    height: 300px;
+    min-height: 300px;
+  }
+  .groceryListPane {
+    flex: 0 0 auto;
+    height: auto;
+    overflow: visible;
+  }
+  .grocerySearchForm { flex-wrap: wrap; }
+  .grocerySearchInput { min-width: 0; }
+
+  /* ----- Community ----- */
+  .communityToolbar { gap: 8px; }
+  .communityCategoryTabs { flex: 1; min-width: 0; }   /* lets the pills scroll */
+  .communityPostCard,
+  .communityPostDetail { padding: 14px; }
+  .communityCommentList { max-height: none; }
+  .postDetailMetaBar { flex-wrap: wrap; gap: 8px; }
+  .communityNewPostTextarea { min-height: 120px; }
+
+  /* ----- Friends ----- */
+  .friendsBodyLayout { gap: 14px; }
+  .cardGrid { max-height: none; overflow: visible; }
+  .modernUserCard { flex-wrap: wrap; gap: 10px; padding: 12px 14px; }
+  .userInfo { min-width: 0; gap: 12px; }
+  .cardActions { flex-wrap: wrap; }
+  .stylishSearchBox input { min-width: 0; }
+  .friendsPillTabs { overflow-x: auto; }
+  .confirmModalBox { width: min(340px, calc(100vw - 32px)); padding: 22px; }
+
+  /* ----- Peer review ----- */
+  .prLookupRow { flex-wrap: wrap; }
+  .prMemberRow { flex-wrap: wrap; gap: 6px; }
+
+  /* ----- World clock ----- */
+  .wcCityRow { gap: 8px; }
+
+  /* ----- Auth / Terms ----- */
+  .formStack { gap: 12px; }
+}
+
+/* ==========================================================================
+   4) SMALL PHONES (≤ 480px)
+   ========================================================================== */
+@media (max-width: 480px) {
+  .userTag { display: none; }                         /* keep Log Out reachable */
+  .navbarWrapper:has(.btnPrimary) .brandTitle { display: none; }  /* landing: logo + 2 buttons */
+  .navActions .btnGlass { padding: 8px 12px; }
+  .honeycombContainer { gap: 12px; }
+  .watchOrb { width: calc((100% - 24px) / 3); }
+}
+
+/* ==========================================================================
+   5) LANDSCAPE PHONES (short screens): smaller orbs so more fits on screen
+   ========================================================================== */
+@media (max-height: 520px) and (orientation: landscape) {
+  :root {
+    --orbBaseSize: 76px;
+    --orbGap: 12px;
+  }
+  .navbarWrapper { height: 54px; }
+  .orbIcon { font-size: 24px; }
+  .orbLabel { font-size: 10px; margin-top: 2px; padding: 0 4px; }
+  .clockOrbTime { font-size: 16px; }
+  .carouselStage { height: 250px; }
+}
+
+/* ==========================================================================
+   6) Respect "reduce motion"
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .liquidViewport::before,
+  .liquidViewport::after { animation: none; }
+  .landscapeGlassCard,
+  .watchOrb { transition: none; }
+}

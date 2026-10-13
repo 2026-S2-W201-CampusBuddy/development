@@ -300,3 +300,145 @@ export async function acceptTerms(username, termsVersion) {
   })
   return handleResponse(response)
 }
+
+// ---------------------------------------------------------------------------
+// Scheduled weather alerts (Web Push)
+// ---------------------------------------------------------------------------
+export async function getWeatherPushPublicKey() {
+  const response = await fetch(`${BASE_URL}/api/weather/push/public-key`)
+  return handleResponse(response)
+}
+
+export async function getWeatherPushStatus(userId, endpoint) {
+  const params = new URLSearchParams({ user_id: userId, endpoint })
+  const response = await fetch(`${BASE_URL}/api/weather/push/status?${params}`)
+  return handleResponse(response)
+}
+
+export async function subscribeWeatherPush(userId, subscription, notifyTime, timezone) {
+  const response = await fetch(`${BASE_URL}/api/weather/push/subscribe`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user_id: userId, subscription, notify_time: notifyTime, timezone }),
+  })
+  return handleResponse(response)
+}
+
+export async function updateWeatherPushTime(userId, endpoint, notifyTime, timezone) {
+  const response = await fetch(`${BASE_URL}/api/weather/push/time`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user_id: userId, endpoint, notify_time: notifyTime, timezone }),
+  })
+  return handleResponse(response)
+}
+
+export async function unsubscribeWeatherPush(userId, endpoint) {
+  const response = await fetch(`${BASE_URL}/api/weather/push/unsubscribe`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user_id: userId, endpoint }),
+  })
+  return handleResponse(response)
+}
+
+export async function sendWeatherPushTest(userId, endpoint) {
+  const response = await fetch(`${BASE_URL}/api/weather/push/test`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user_id: userId, endpoint }),
+  })
+  return handleResponse(response)
+}
+
+// ---------------------------------------------------------------------------
+// Calendar + Alerts
+// ---------------------------------------------------------------------------
+export async function getCalendarEvents(userId, from, to) {
+  const params = new URLSearchParams({ user_id: userId, from, to })
+  const response = await fetch(`${BASE_URL}/api/calendar/events?${params}`)
+  return handleResponse(response)
+}
+
+export async function createCalendarEvent(userId, payload) {
+  const response = await fetch(`${BASE_URL}/api/calendar/events`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ...payload, user_id: userId }),
+  })
+  return handleResponse(response)
+}
+
+export async function updateCalendarEvent(userId, eventId, payload) {
+  const response = await fetch(`${BASE_URL}/api/calendar/events/${eventId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ...payload, user_id: userId }),
+  })
+  return handleResponse(response)
+}
+
+export async function deleteCalendarEvent(userId, eventId) {
+  const response = await fetch(`${BASE_URL}/api/calendar/events/${eventId}?user_id=${userId}`, {
+    method: 'DELETE',
+  })
+  return handleResponse(response)
+}
+
+export async function getAlertsSummary(userId, date) {
+  const params = new URLSearchParams({ user_id: userId, date })
+  const response = await fetch(`${BASE_URL}/api/alerts/summary?${params}`)
+  return handleResponse(response)
+}
+
+export async function getUpcomingAlerts(userId) {
+  const response = await fetch(`${BASE_URL}/api/alerts/upcoming?user_id=${userId}`)
+  return handleResponse(response)
+}
+
+export async function getAlertInbox(userId) {
+  const response = await fetch(`${BASE_URL}/api/alerts/inbox?user_id=${userId}`)
+  return handleResponse(response)
+}
+
+export async function markAlertsRead(userId, { ids = [], all = false } = {}) {
+  const response = await fetch(`${BASE_URL}/api/alerts/read`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user_id: userId, ids, all }),
+  })
+  return handleResponse(response)
+}
+
+export async function getReminderDeviceStatus(userId, endpoint) {
+  const params = new URLSearchParams({ user_id: userId, endpoint })
+  const response = await fetch(`${BASE_URL}/api/alerts/devices/status?${params}`)
+  return handleResponse(response)
+}
+
+export async function subscribeReminderDevice(userId, subscription) {
+  const response = await fetch(`${BASE_URL}/api/alerts/devices/subscribe`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user_id: userId, subscription }),
+  })
+  return handleResponse(response)
+}
+
+export async function unsubscribeReminderDevice(userId, endpoint) {
+  const response = await fetch(`${BASE_URL}/api/alerts/devices/unsubscribe`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user_id: userId, endpoint }),
+  })
+  return handleResponse(response)
+}
+
+export async function sendReminderTest(userId, endpoint) {
+  const response = await fetch(`${BASE_URL}/api/alerts/test`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user_id: userId, endpoint }),
+  })
+  return handleResponse(response)
+}
