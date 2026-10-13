@@ -1,5 +1,8 @@
 from flask import Blueprint, jsonify, request
-from controllers.auth_controller import register_logic, login_logic, verify_email_logic, resend_code_logic
+from controllers.auth_controller import (
+    register_logic, login_logic, verify_email_logic, resend_code_logic,
+    terms_status_logic, accept_terms_logic,
+)
 auth_bp = Blueprint('auth', __name__, url_prefix='/api')
 
 @auth_bp.route('/register', methods=['POST'])
@@ -9,8 +12,27 @@ def register():
         return jsonify({"status": "error", "message": "username, email and password are required"}), 400
 
     result, status_code = register_logic(
-        data['username'], data['email'], data['password'], data.get('agreedToTerms', False)
+        data['username'], data['email'], data['password'],
+        data.get('agreedToTerms', False), data.get('termsVersion')
     )
+    return jsonify(result), status_code
+
+
+@auth_bp.route('/terms-status', methods=['GET'])
+def terms_status():
+    username = request.args.get('username', '')
+    if not username:
+        return jsonify({"status": "error", "message": "username query param is required"}), 400
+    result, status_code = terms_status_logic(username)
+    return jsonify(result), status_code
+
+
+@auth_bp.route('/accept-terms', methods=['POST'])
+def accept_terms():
+    data = request.get_json()
+    if not data or 'username' not in data or 'termsVersion' not in data:
+        return jsonify({"status": "error", "message": "username and termsVersion are required"}), 400
+    result, status_code = accept_terms_logic(data['username'], data['termsVersion'])
     return jsonify(result), status_code
 
 

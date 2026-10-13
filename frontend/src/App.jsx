@@ -4,43 +4,34 @@ import AuthModal from './components/AuthModal'
 import LandingPage from './pages/LandingPage'
 import MainPage from './pages/MainPage'
 
-const STORAGE_KEY = 'campusbuddy_logged_user'
-
-function loadSavedUser() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY))
-    return saved && typeof saved === 'object' && saved.id ? saved : null
-  } catch {
-    return null
-  }
+// Earlier versions of CampusBuddy remembered the logged-in user in the browser,
+// which made the site open straight into the account. Login now lives only in
+// memory, so every fresh visit starts on the landing page. This clears any
+// login saved by the older version (safe to delete this block later).
+try {
+  localStorage.removeItem('campusbuddy_logged_user')
+} catch {
+  // storage unavailable — nothing to clean up
 }
 
 function App() {
-  const [loggedUser, setLoggedUser] = useState(loadSavedUser)
-  const [currentPage, setCurrentPage] = useState(() => (loadSavedUser() ? 'main' : 'landing'))
+  const [loggedUser, setLoggedUser] = useState(null)
+  const [currentPage, setCurrentPage] = useState('landing')
   const [authMode, setAuthMode] = useState(null)
 
-  const saveUser = (user) => {
-    setLoggedUser(user)
-    if (user) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(user))
-    } else {
-      localStorage.removeItem(STORAGE_KEY)
-    }
-  }
-
   const handleAuthSuccess = (userData) => {
-    saveUser(userData)
+    setLoggedUser(userData)
     setAuthMode(null)
     setCurrentPage('main')
   }
 
   const handleLogout = () => {
-    saveUser(null)
+    setLoggedUser(null)
     setCurrentPage('landing')
   }
+
   const handleUsernameChanged = (newUsername) => {
-    saveUser({ ...loggedUser, username: newUsername })
+    setLoggedUser((user) => ({ ...user, username: newUsername }))
   }
 
   return (

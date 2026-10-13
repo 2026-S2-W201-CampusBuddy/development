@@ -1,0 +1,256 @@
+/* Alerts bubble */
+.hubModalBody.alertsModalBody {
+  justify-content: flex-start;
+  gap: 14px;
+}
+
+.alertsHeader {
+  margin-bottom: 4px;
+  flex-shrink: 0;
+}
+
+/* ---------- Notifications on this device ---------- */
+.alertsDeviceCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: rgba(248, 113, 113, 0.08);
+  border: 1px solid rgba(248, 113, 113, 0.28);
+  flex-shrink: 0;
+}
+
+.alertsDeviceInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  flex: 1 1 260px;
+}
+
+.alertsDeviceInfo strong {
+  font-family: var(--fontDisplay);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.alertsDeviceInfo span,
+.alertsDeviceText {
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.alertsDeviceActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.alertsDeviceActions .btnGlass {
+  padding: 8px 18px;
+  font-size: 13px;
+}
+
+.alertsDeviceCard .alertsMessage {
+  flex-basis: 100%;
+  margin: 0;
+}
+
+/* ---------- Tabs ---------- */
+.alertsToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.alertsTabs {
+  display: flex;
+  gap: 6px;
+  padding: 5px;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.alertsTab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 20px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.62);
+  font-family: var(--fontUi);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.alertsTab:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.alertsTab.active {
+  background: linear-gradient(135deg, #f87171, #dc2626);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(248, 113, 113, 0.35);
+}
+
+.alertsTabCount {
+  font-size: 12px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.alertsBadge {
+  background: #ffffff;
+  color: #dc2626;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 1px 8px;
+  border-radius: 999px;
+}
+
+.alertsNewBtn {
+  padding: 9px 18px;
+  font-size: 13.5px;
+}
+
+/* ---------- Lists ---------- */
+.alertsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.alertsItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.alertsItemIcon {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.alertsItemMain {
+  flex: 1;
+  min-width: 0;
+}
+
+.alertsItemTitle {
+  font-family: var(--fontDisplay);
+  font-size: 16px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.alertsItemWhen {
+  margin-top: 3px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fca5a5;
+}
+
+.alertsItemBody {
+  margin-top: 2px;
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, 0.85);
+  overflow-wrap: anywhere;
+}
+
+.alertsItemMeta {
+  margin-top: 3px;
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.alertsItemActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.alertsItemActions .btnGlass {
+  padding: 6px 14px;
+  font-size: 12.5px;
+}
+
+.alertsConfirmText {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.alertsDangerBtn {
+  background: rgba(248, 113, 113, 0.25) !important;
+  border-color: rgba(248, 113, 113, 0.6) !important;
+}
+
+.inboxItem.fresh {
+  background: rgba(248, 113, 113, 0.12);
+  border-color: rgba(248, 113, 113, 0.5);
+}
+
+.inboxItem.missed {
+  opacity: 0.75;
+}
+
+.alertsNewDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #f87171;
+  box-shadow: 0 0 10px rgba(248, 113, 113, 0.8);
+  flex-shrink: 0;
+}
+
+.alertsEmpty {
+  font-size: 14px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 20px 4px;
+}
+
+.alertsMessage {
+  font-size: 13px;
+  padding: 9px 13px;
+  border-radius: 10px;
+}
+
+.alertsMessage.success {
+  background: rgba(16, 185, 129, 0.14);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #6ee7b7;
+}
+
+.alertsMessage.warn {
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  color: #fcd34d;
+}
+
+.alertsMessage.error {
+  background: rgba(248, 113, 113, 0.14);
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  color: #fca5a5;
+}
