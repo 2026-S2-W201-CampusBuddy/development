@@ -254,35 +254,3 @@
   border: 1px solid rgba(248, 113, 113, 0.4);
   color: #fca5a5;
 }
-
-/* ---------- Phone ---------- */
-@media (max-width: 720px) {
-  .alertsToolbar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .alertsTabs .alertsTab {
-    flex: 1;
-    justify-content: center;
-  }
-  .alertsNewBtn {
-    min-height: 42px;
-  }
-  .alertsItem {
-    flex-wrap: wrap;
-  }
-  .alertsItemActions {
-    flex-basis: 100%;
-    justify-content: flex-start;
-  }
-  .alertsItemActions .btnGlass,
-  .alertsDeviceActions .btnGlass {
-    min-height: 38px;
-  }
-  .alertsDeviceActions {
-    width: 100%;
-  }
-  .alertsDeviceActions .btnGlass {
-    flex: 1;
-  }
-}

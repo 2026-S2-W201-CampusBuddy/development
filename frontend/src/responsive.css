@@ -68,7 +68,6 @@ button, [role="button"], .watchOrb, .landscapeGlassCard {
   }
   .modalDialog {
     max-height: calc(100dvh - 24px);
-    overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
   }

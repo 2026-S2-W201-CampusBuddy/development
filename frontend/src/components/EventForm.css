@@ -189,12 +189,3 @@
   cursor: not-allowed;
   transform: none;
 }
-
-@media (max-width: 720px) {
-  .eventFormActions .btnGlass {
-    flex: 1;
-  }
-  .eventFormPushHint .btnGlass {
-    width: 100%;
-  }
-}

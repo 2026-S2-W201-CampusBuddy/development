@@ -93,3 +93,25 @@
   border: 1px solid rgba(248, 113, 113, 0.4);
   color: #fca5a5;
 }
+
+/* ------------------------------------------------------------------
+   The weather dialog got taller when the daily alert box was added. On
+   shorter browser windows it spilled off the top and bottom of the screen
+   with no way to scroll. Same fix the Rent dialog uses: cap the height and
+   scroll inside the dialog.
+   ------------------------------------------------------------------ */
+.modalDialog.weatherDialog {
+  max-height: 88vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+
+.modalDialog.weatherDialog::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modalDialog.weatherDialog::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 3px;
+}
