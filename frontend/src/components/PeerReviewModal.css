@@ -1,0 +1,285 @@
+/* Peer Review Modal — reuses .modalBackdrop / .modalDialog / .modalCloseBtn /
+   .weatherStatusText / .formError / .btnGlass / .liquidInput from shared styles */
+
+.peerReviewDialog {
+  max-width: 460px;
+  max-height: 88vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+
+.peerReviewDialog::-webkit-scrollbar {
+  width: 6px;
+}
+
+.peerReviewDialog::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+}
+
+.prTabRow {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.prTab {
+  flex: 1;
+  min-width: 80px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.prTab:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.prTabActive {
+  background: rgba(56, 189, 248, 0.16);
+  border-color: rgba(56, 189, 248, 0.4);
+  color: #ffffff;
+}
+
+.prPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.prCreateGroupRow,
+.prInviteRow,
+.prLookupRow {
+  display: flex;
+  gap: 8px;
+}
+
+.prCreateGroupRow .liquidInput,
+.prLookupRow .liquidInput {
+  flex: 1;
+}
+
+.prGroupCard {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.prGroupName {
+  font-weight: 700;
+  font-size: 14px;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.prMemberList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.prMemberRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.prMemberName {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.prStatusBadge {
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.prStatusBadge-confirmed {
+  background: rgba(45, 212, 191, 0.16);
+  color: #2dd4bf;
+}
+
+.prStatusBadge-pending {
+  background: rgba(251, 191, 36, 0.16);
+  color: #fbbf24;
+}
+
+.prSmallBtn {
+  padding: 5px 10px;
+  font-size: 11.5px;
+}
+
+.prInviteInput {
+  flex: 1;
+}
+
+.prInviteCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.prInviteGroupName {
+  font-weight: 700;
+  color: #ffffff;
+  margin-top: 2px;
+}
+
+.prInviteActions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.prRatingSubject {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.prCategoryBlock {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  margin-bottom: 10px;
+}
+
+.prCategoryLabelRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.prCategoryLabel {
+  font-weight: 700;
+  font-size: 13.5px;
+  color: #ffffff;
+}
+
+.prCategoryHint {
+  font-size: 10.5px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.prStarRow {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.prStarBtn {
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  color: rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.1s ease;
+}
+
+.prStarBtnActive {
+  color: #fbbf24;
+}
+
+.prCommentBox {
+  width: 100%;
+  min-height: 50px;
+  resize: vertical;
+  font-size: 12.5px;
+}
+
+.prSuccessBox {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  text-align: center;
+  padding: 20px 10px;
+}
+
+.prMyRatingCard {
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.prMyRatingHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+  color: #ffffff;
+  font-size: 13.5px;
+}
+
+.prMyRatingGroup {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.prMyRatingGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.prScoreCard {
+  padding: 24px 16px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.14), rgba(192, 132, 252, 0.1));
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  text-align: center;
+}
+
+.prScoreUsername {
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 6px;
+}
+
+.prScoreNumber {
+  font-family: var(--fontDisplay);
+  font-size: 36px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.prScoreSubtext {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 4px;
+}
+
+.prTermsCheckbox {
+  margin: 14px 0 12px;
+}

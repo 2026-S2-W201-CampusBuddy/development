@@ -12,6 +12,8 @@ import EventsModal from '../components/EventsModal'
 import FriendsModal from '../components/FriendsModal'
 import SettingsModal from '../components/SettingsModal'
 import CurrencyModal from '../components/CurrencyModal'
+import PeerReviewModal from '../components/PeerReviewModal'
+import AdminModal from '../components/AdminModal'
 import './MainPage.css'
 
 export default function MainPage({ loggedUser, onUsernameChanged, onLogout }) {
@@ -25,6 +27,9 @@ export default function MainPage({ loggedUser, onUsernameChanged, onLogout }) {
   const [isFriendsOpen, setIsFriendsOpen] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [isCurrencyOpen, setIsCurrencyOpen] = useState(false)
+  const [isPeerReviewOpen, setIsPeerReviewOpen] = useState(false)
+  const [isAdminOpen, setIsAdminOpen] = useState(false)
+  const isAdmin = loggedUser?.role === 'admin'
   // Pending friend requests counter for the main hub orb
   const [pendingRequestsCount, setPendingRequestsCount] = useState(0)
 
@@ -134,7 +139,9 @@ export default function MainPage({ loggedUser, onUsernameChanged, onLogout }) {
     [
       { id: 'settings', icon: '⚙️', label: 'Settings', accentColor: '#94a3b8', glowColor: 'rgba(148, 163, 184, 0.4)', action: () => setIsSettingsOpen(true) },
       { id: 'currency', icon: '💱', label: 'Currency Exchange', accentColor: '#facc15', glowColor: 'rgba(250, 204, 21, 0.4)', action: () => setIsCurrencyOpen(true) },
-      { id: 'canvas', icon: '🔗', label: 'Canvas', accentColor: '#ef4444', glowColor: 'rgba(239, 68, 68, 0.4)', action: () => alert('Canvas Portal') }
+      { id: 'canvas', icon: '🔗', label: 'Canvas', accentColor: '#ef4444', glowColor: 'rgba(239, 68, 68, 0.4)', action: () => alert('Canvas Portal') },
+      { id: 'peerReview', icon: '📝', label: 'Peer Review', accentColor: '#a78bfa', glowColor: 'rgba(167, 139, 250, 0.4)', action: () => setIsPeerReviewOpen(true) },
+      ...(isAdmin ? [{ id: 'admin', icon: '🛡️', label: 'Admin', accentColor: '#f87171', glowColor: 'rgba(248, 113, 113, 0.4)', action: () => setIsAdminOpen(true) }] : [])
     ]
   ]
 
@@ -185,6 +192,18 @@ export default function MainPage({ loggedUser, onUsernameChanged, onLogout }) {
         onLogout={onLogout}
       />
       <CurrencyModal isOpen={isCurrencyOpen} onClose={() => setIsCurrencyOpen(false)} />
+      <PeerReviewModal
+        isOpen={isPeerReviewOpen}
+        onClose={() => setIsPeerReviewOpen(false)}
+        currentUser={loggedUser}
+      />
+      {isAdmin && (
+        <AdminModal
+          isOpen={isAdminOpen}
+          onClose={() => setIsAdminOpen(false)}
+          currentUser={loggedUser}
+        />
+      )}
     </main>
   )
 }

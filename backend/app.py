@@ -8,6 +8,8 @@ from routes.worldclock_routes import worldclock_bp
 import os
 from dotenv import load_dotenv
 from routes.settings_routes import settings_bp
+from routes.peer_review_routes import peer_review_bp
+from routes.admin_routes import admin_bp
 
 load_dotenv()  # This line loads variables from .env file into os.environ
 
@@ -24,7 +26,9 @@ app = Flask(__name__)
 CORS(app)
 
 # Tell Flask where to store the database file
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///campusbuddy.db'
+# DATABASE_URL lets tests point at an in-memory database (see tests/conftest.py)
+# so running pytest can never touch or wipe the real local dev database.
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///campusbuddy.db')
 
 # Connect the db object to this Flask app
 db.init_app(app)
@@ -39,10 +43,16 @@ app.register_blueprint(rent_bp)
 app.register_blueprint(worldclock_bp)
 app.register_blueprint(friend_bp)
 app.register_blueprint(settings_bp)
+app.register_blueprint(peer_review_bp)
+app.register_blueprint(admin_bp)
 
 # Create the database file/tabcles if they don't already exist
 with app.app_context():
     db.create_all()
+    # create_all() never adds columns to an existing table — this does, so a
+    # database created before newer columns existed doesn't crash on login.
+    from db_upgrade import add_missing_user_columns
+    add_missing_user_columns(db)
 
 # Factory function to support pytest execution
 def create_app(config_name='testing'):

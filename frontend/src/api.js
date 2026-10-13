@@ -113,11 +113,11 @@ export async function getCheapestRentAreas() {
   return handleResponse(response)
 }
 
-export async function registerUser(username, email, password, agreedToTerms) {
+export async function registerUser(username, email, password, agreedToTerms, termsVersion) {
   const response = await fetch(`${BASE_URL}/api/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, email, password, agreedToTerms }),
+    body: JSON.stringify({ username, email, password, agreedToTerms, termsVersion }),
   })
   return handleResponse(response)
 }
@@ -218,4 +218,85 @@ export async function getSupportedCurrencies() {
     throw new Error('Could not fetch currency list')
   }
   return response.json()
+}
+
+export async function createPeerReviewGroup(username, groupName) {
+  const response = await fetch(`${BASE_URL}/api/peer-review/groups`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, groupName }),
+  })
+  return handleResponse(response)
+}
+
+export async function invitePeerReviewMember(username, groupId, inviteeUsername) {
+  const response = await fetch(`${BASE_URL}/api/peer-review/groups/${groupId}/invite`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, inviteeUsername }),
+  })
+  return handleResponse(response)
+}
+
+export async function respondToPeerReviewInvite(membershipId, username, action) {
+  const response = await fetch(`${BASE_URL}/api/peer-review/invites/${membershipId}/respond`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, action }),
+  })
+  return handleResponse(response)
+}
+
+export async function submitPeerReviewRating(username, groupId, ratedUsername, scores) {
+  const response = await fetch(`${BASE_URL}/api/peer-review/ratings`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, groupId, ratedUsername, scores }),
+  })
+  return handleResponse(response)
+}
+
+export async function getMyPeerReviewGroups(username) {
+  const response = await fetch(`${BASE_URL}/api/peer-review/my-groups?username=${encodeURIComponent(username)}`)
+  return handleResponse(response)
+}
+
+export async function getMyPeerReviewInvites(username) {
+  const response = await fetch(`${BASE_URL}/api/peer-review/my-invites?username=${encodeURIComponent(username)}`)
+  return handleResponse(response)
+}
+
+export async function getMyPeerReviewRatingsGiven(username) {
+  const response = await fetch(`${BASE_URL}/api/peer-review/my-ratings-given?username=${encodeURIComponent(username)}`)
+  return handleResponse(response)
+}
+
+export async function getPeerReviewPublicScore(targetUsername) {
+  const response = await fetch(`${BASE_URL}/api/peer-review/score/${encodeURIComponent(targetUsername)}`)
+  return handleResponse(response)
+}
+
+export async function getAdminAllRatings(username) {
+  const response = await fetch(`${BASE_URL}/api/admin/peer-review/ratings?username=${encodeURIComponent(username)}`)
+  return handleResponse(response)
+}
+
+export async function getAdminAllGroups(username) {
+  const response = await fetch(`${BASE_URL}/api/admin/peer-review/groups?username=${encodeURIComponent(username)}`)
+  return handleResponse(response)
+}
+
+
+export async function getTermsStatus(username) {
+  const response = await fetch(`${BASE_URL}/api/terms-status?username=${encodeURIComponent(username)}`)
+  return handleResponse(response)
+}
+
+export async function acceptTerms(username, termsVersion) {
+  const response = await fetch(`${BASE_URL}/api/accept-terms`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, termsVersion }),
+  })
+  return handleResponse(response)
 }
