@@ -19,7 +19,7 @@
 from datetime import datetime
 from extensions import db
 
-MIN_RATERS_FOR_PUBLIC_SCORE = 3
+MIN_RATERS_FOR_PUBLIC_SCORE = 2
 
 
 class PeerReviewGroup(db.Model):
