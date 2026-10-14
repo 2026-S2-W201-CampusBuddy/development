@@ -136,7 +136,7 @@ export default function MainPage({ loggedUser, onUsernameChanged, onLogout }) {
     // Row 2 (4 Orbs)
     [
       { id: 'market', icon: '🛒', label: 'Groceries', accentColor: '#fb7185', glowColor: 'rgba(251, 113, 133, 0.4)', action: () => setIsGroceryOpen(true) },
-      { id: 'quickAdd', icon: '➕', label: 'New Post', accentColor: '#a78bfa', glowColor: 'rgba(167, 139, 250, 0.4)', action: () => openCommunityModal('general', 'new') },
+      { id: 'peerReview', icon: '📝', label: 'Peer Review', accentColor: '#a78bfa', glowColor: 'rgba(167, 139, 250, 0.4)', action: () => setIsPeerReviewOpen(true) },
       { id: 'community', icon: '💬', label: 'Community', accentColor: '#818cf8', glowColor: 'rgba(129, 140, 248, 0.4)', action: () => openCommunityModal('general', 'list') },
       {
         id: 'friends',
@@ -163,12 +163,11 @@ export default function MainPage({ loggedUser, onUsernameChanged, onLogout }) {
       { id: 'food', icon: '🍽️', label: 'Eatery', accentColor: '#f59e0b', glowColor: 'rgba(245, 158, 11, 0.4)', action: () => openCommunityModal('food', 'list') },
       { id: 'messages', icon: '💌', label: 'Inbox', accentColor: '#6366f1', glowColor: 'rgba(99, 102, 241, 0.4)', action: () => alert('Direct Messages') }
     ],
-    // Row 5 (3 Orbs)
+    // Row 5 (3 Orbs, +1 for admins)
     [
       { id: 'settings', icon: '⚙️', label: 'Settings', accentColor: '#94a3b8', glowColor: 'rgba(148, 163, 184, 0.4)', action: () => setIsSettingsOpen(true) },
       { id: 'currency', icon: '💱', label: 'Currency Exchange', accentColor: '#facc15', glowColor: 'rgba(250, 204, 21, 0.4)', action: () => setIsCurrencyOpen(true) },
       { id: 'canvas', icon: '🔗', label: 'Canvas', accentColor: '#ef4444', glowColor: 'rgba(239, 68, 68, 0.4)', action: () => alert('Canvas Portal') },
-      { id: 'peerReview', icon: '📝', label: 'Peer Review', accentColor: '#a78bfa', glowColor: 'rgba(167, 139, 250, 0.4)', action: () => setIsPeerReviewOpen(true) },
       ...(isAdmin ? [{ id: 'admin', icon: '🛡️', label: 'Admin', accentColor: '#f87171', glowColor: 'rgba(248, 113, 113, 0.4)', action: () => setIsAdminOpen(true) }] : [])
     ]
   ]
