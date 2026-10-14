@@ -219,3 +219,8 @@ export async function getSupportedCurrencies() {
   }
   return response.json()
 }
+
+export async function getInternships() {
+  const response = await fetch(`${BASE_URL}/api/internships`)
+  return handleResponse(response)
+}

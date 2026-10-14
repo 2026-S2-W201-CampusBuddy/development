@@ -5,6 +5,7 @@ from extensions import db
 from routes.weather_routes import weather_bp
 from routes.rent_routes import rent_bp
 from routes.worldclock_routes import worldclock_bp
+from routes.internships_routes import internships_bp
 import os
 from dotenv import load_dotenv
 from routes.settings_routes import settings_bp
@@ -39,6 +40,7 @@ app.register_blueprint(rent_bp)
 app.register_blueprint(worldclock_bp)
 app.register_blueprint(friend_bp)
 app.register_blueprint(settings_bp)
+app.register_blueprint(internships_bp)
 
 # Create the database file/tabcles if they don't already exist
 with app.app_context():
