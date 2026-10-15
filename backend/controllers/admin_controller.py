@@ -5,6 +5,8 @@
 from datetime import datetime, timedelta
 from models.peer_review_model import PeerReviewGroup, PeerReviewGroupMembership, PeerReviewRating
 from models.user_model import User
+from models.peer_review_extras_model import PeerReviewRatingTag
+from services import peer_score
 
 SUSPICIOUSLY_FAST_SECONDS = 60
 SUSPICIOUSLY_MANY_GROUPS_IN_24H = 5
@@ -31,6 +33,7 @@ def get_all_ratings_logic(requesting_username):
 
     ratings = PeerReviewRating.query.order_by(PeerReviewRating.created_at.desc()).all()
     groups_by_id = {g.id: g for g in PeerReviewGroup.query.all()}
+    tags_by_rating = PeerReviewRatingTag.tags_by_rating([r.id for r in ratings])
 
     results = []
     for r in ratings:
@@ -53,6 +56,7 @@ def get_all_ratings_logic(requesting_username):
             "attendanceComment": r.attendance_comment,
             "overallRating": r.overall_rating,
             "overallComment": r.overall_comment,
+            "behaviourTags": [peer_score.TAG_LABELS.get(c, c) for c in tags_by_rating.get(r.id, [])],
             "createdAt": r.created_at.isoformat(),
             "flaggedSubmittedQuickly": is_fast,
         })

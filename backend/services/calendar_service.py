@@ -86,7 +86,8 @@ class SqlStore:
         from extensions import db
         from models.calendar_model import EventNotification
         from sqlalchemy import func
-        return db.session.query(func.max(EventNotification.occurrence_local)).filter_by(event_id=event_id).scalar()
+        return (db.session.query(func.max(EventNotification.occurrence_local))
+                .filter(EventNotification.event_id == event_id).scalar())
 
     def add_reminders(self, reminders):
         from extensions import db

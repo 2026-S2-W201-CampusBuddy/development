@@ -277,7 +277,7 @@ def upcoming_logic(user_id, limit=30):
     rows = (EventNotification.query.filter_by(user_id=user_id, status='pending')
             .order_by(EventNotification.fire_at).limit(max(1, min(limit, 100))).all())
     event_ids = {row.event_id for row in rows if row.event_id}
-    events = {e.id: e for e in CalendarEvent.query.filter(CalendarEvent.id.in_(event_ids)).all()} if event_ids else {}
+    events = {e.id: e for e in CalendarEvent.query.filter(CalendarEvent.id.in_(list(event_ids))).all()} if event_ids else {}
 
     items = []
     for row in rows:

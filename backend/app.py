@@ -13,6 +13,8 @@ from routes.admin_routes import admin_bp
 from routes.weather_push_routes import weather_push_bp
 from services.weather_push_service import start_scheduler as start_weather_scheduler
 from routes.calendar_routes import calendar_bp
+from routes.peer_review_safety_routes import peer_review_safety_bp
+from routes.admin_reports_routes import admin_reports_bp
 from services.calendar_service import start_reminder_scheduler
 
 load_dotenv()  # This line loads variables from .env file into os.environ
@@ -51,6 +53,8 @@ app.register_blueprint(peer_review_bp)
 app.register_blueprint(admin_bp)
 app.register_blueprint(weather_push_bp)
 app.register_blueprint(calendar_bp)
+app.register_blueprint(peer_review_safety_bp)   # Peer Review: options, My Score, disputes
+app.register_blueprint(admin_reports_bp)        # Peer Review: admin dispute queue
 
 # Create the database file/tabcles if they don't already exist
 with app.app_context():
