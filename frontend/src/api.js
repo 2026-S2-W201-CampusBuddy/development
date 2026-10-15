@@ -220,6 +220,11 @@ export async function getSupportedCurrencies() {
   return response.json()
 }
 
+export async function getInternships() {
+  const response = await fetch(`${BASE_URL}/api/internships`)
+  return handleResponse(response)
+}
+
 export async function createPeerReviewGroup(username, groupName) {
   const response = await fetch(`${BASE_URL}/api/peer-review/groups`, {
     method: 'POST',
@@ -257,38 +262,51 @@ export async function submitPeerReviewRating(username, groupId, ratedUsername, s
 }
 
 export async function getMyPeerReviewGroups(username) {
-  const response = await fetch(`${BASE_URL}/api/peer-review/my-groups?username=${encodeURIComponent(username)}`)
+  const response = await fetch(
+    `${BASE_URL}/api/peer-review/my-groups?username=${encodeURIComponent(username)}`
+  )
   return handleResponse(response)
 }
 
 export async function getMyPeerReviewInvites(username) {
-  const response = await fetch(`${BASE_URL}/api/peer-review/my-invites?username=${encodeURIComponent(username)}`)
+  const response = await fetch(
+    `${BASE_URL}/api/peer-review/my-invites?username=${encodeURIComponent(username)}`
+  )
   return handleResponse(response)
 }
 
 export async function getMyPeerReviewRatingsGiven(username) {
-  const response = await fetch(`${BASE_URL}/api/peer-review/my-ratings-given?username=${encodeURIComponent(username)}`)
+  const response = await fetch(
+    `${BASE_URL}/api/peer-review/my-ratings-given?username=${encodeURIComponent(username)}`
+  )
   return handleResponse(response)
 }
 
 export async function getPeerReviewPublicScore(targetUsername) {
-  const response = await fetch(`${BASE_URL}/api/peer-review/score/${encodeURIComponent(targetUsername)}`)
+  const response = await fetch(
+    `${BASE_URL}/api/peer-review/score/${encodeURIComponent(targetUsername)}`
+  )
   return handleResponse(response)
 }
 
 export async function getAdminAllRatings(username) {
-  const response = await fetch(`${BASE_URL}/api/admin/peer-review/ratings?username=${encodeURIComponent(username)}`)
+  const response = await fetch(
+    `${BASE_URL}/api/admin/peer-review/ratings?username=${encodeURIComponent(username)}`
+  )
   return handleResponse(response)
 }
 
 export async function getAdminAllGroups(username) {
-  const response = await fetch(`${BASE_URL}/api/admin/peer-review/groups?username=${encodeURIComponent(username)}`)
+  const response = await fetch(
+    `${BASE_URL}/api/admin/peer-review/groups?username=${encodeURIComponent(username)}`
+  )
   return handleResponse(response)
 }
 
-
 export async function getTermsStatus(username) {
-  const response = await fetch(`${BASE_URL}/api/terms-status?username=${encodeURIComponent(username)}`)
+  const response = await fetch(
+    `${BASE_URL}/api/terms-status?username=${encodeURIComponent(username)}`
+  )
   return handleResponse(response)
 }
 
@@ -304,6 +322,7 @@ export async function acceptTerms(username, termsVersion) {
 // ---------------------------------------------------------------------------
 // Scheduled weather alerts (Web Push)
 // ---------------------------------------------------------------------------
+
 export async function getWeatherPushPublicKey() {
   const response = await fetch(`${BASE_URL}/api/weather/push/public-key`)
   return handleResponse(response)
@@ -319,7 +338,12 @@ export async function subscribeWeatherPush(userId, subscription, notifyTime, tim
   const response = await fetch(`${BASE_URL}/api/weather/push/subscribe`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ user_id: userId, subscription, notify_time: notifyTime, timezone }),
+    body: JSON.stringify({
+      user_id: userId,
+      subscription,
+      notify_time: notifyTime,
+      timezone,
+    }),
   })
   return handleResponse(response)
 }
@@ -328,7 +352,12 @@ export async function updateWeatherPushTime(userId, endpoint, notifyTime, timezo
   const response = await fetch(`${BASE_URL}/api/weather/push/time`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ user_id: userId, endpoint, notify_time: notifyTime, timezone }),
+    body: JSON.stringify({
+      user_id: userId,
+      endpoint,
+      notify_time: notifyTime,
+      timezone,
+    }),
   })
   return handleResponse(response)
 }
@@ -354,6 +383,7 @@ export async function sendWeatherPushTest(userId, endpoint) {
 // ---------------------------------------------------------------------------
 // Calendar + Alerts
 // ---------------------------------------------------------------------------
+
 export async function getCalendarEvents(userId, from, to) {
   const params = new URLSearchParams({ user_id: userId, from, to })
   const response = await fetch(`${BASE_URL}/api/calendar/events?${params}`)
@@ -379,9 +409,12 @@ export async function updateCalendarEvent(userId, eventId, payload) {
 }
 
 export async function deleteCalendarEvent(userId, eventId) {
-  const response = await fetch(`${BASE_URL}/api/calendar/events/${eventId}?user_id=${userId}`, {
-    method: 'DELETE',
-  })
+  const response = await fetch(
+    `${BASE_URL}/api/calendar/events/${eventId}?user_id=${userId}`,
+    {
+      method: 'DELETE',
+    }
+  )
   return handleResponse(response)
 }
 
@@ -392,12 +425,16 @@ export async function getAlertsSummary(userId, date) {
 }
 
 export async function getUpcomingAlerts(userId) {
-  const response = await fetch(`${BASE_URL}/api/alerts/upcoming?user_id=${userId}`)
+  const response = await fetch(
+    `${BASE_URL}/api/alerts/upcoming?user_id=${userId}`
+  )
   return handleResponse(response)
 }
 
 export async function getAlertInbox(userId) {
-  const response = await fetch(`${BASE_URL}/api/alerts/inbox?user_id=${userId}`)
+  const response = await fetch(
+    `${BASE_URL}/api/alerts/inbox?user_id=${userId}`
+  )
   return handleResponse(response)
 }
 
@@ -412,7 +449,9 @@ export async function markAlertsRead(userId, { ids = [], all = false } = {}) {
 
 export async function getReminderDeviceStatus(userId, endpoint) {
   const params = new URLSearchParams({ user_id: userId, endpoint })
-  const response = await fetch(`${BASE_URL}/api/alerts/devices/status?${params}`)
+  const response = await fetch(
+    `${BASE_URL}/api/alerts/devices/status?${params}`
+  )
   return handleResponse(response)
 }
 
@@ -420,7 +459,10 @@ export async function subscribeReminderDevice(userId, subscription) {
   const response = await fetch(`${BASE_URL}/api/alerts/devices/subscribe`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ user_id: userId, subscription }),
+    body: JSON.stringify({
+      user_id: userId,
+      subscription,
+    }),
   })
   return handleResponse(response)
 }
@@ -429,7 +471,10 @@ export async function unsubscribeReminderDevice(userId, endpoint) {
   const response = await fetch(`${BASE_URL}/api/alerts/devices/unsubscribe`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ user_id: userId, endpoint }),
+    body: JSON.stringify({
+      user_id: userId,
+      endpoint,
+    }),
   })
   return handleResponse(response)
 }
@@ -438,7 +483,10 @@ export async function sendReminderTest(userId, endpoint) {
   const response = await fetch(`${BASE_URL}/api/alerts/test`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ user_id: userId, endpoint }),
+    body: JSON.stringify({
+      user_id: userId,
+      endpoint,
+    }),
   })
   return handleResponse(response)
 }
@@ -492,3 +540,4 @@ export async function resolveAdminReport(username, reportId, { outcome, note, re
   })
   return handleResponse(response)
 }
+

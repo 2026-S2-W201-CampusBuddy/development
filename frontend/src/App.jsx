@@ -4,34 +4,58 @@ import AuthModal from './components/AuthModal'
 import LandingPage from './pages/LandingPage'
 import MainPage from './pages/MainPage'
 
-// Earlier versions of CampusBuddy remembered the logged-in user in the browser,
-// which made the site open straight into the account. Login now lives only in
-// memory, so every fresh visit starts on the landing page. This clears any
-// login saved by the older version (safe to delete this block later).
+// Older versions saved the login in localStorage, which kept people signed in
+// forever. Clear that old value (safe to delete this block later).
 try {
   localStorage.removeItem('campusbuddy_logged_user')
 } catch {
-  // storage unavailable — nothing to clean up
+  // storage unavailable
+}
+
+// The login is kept in sessionStorage: it survives a page reload, but a new
+// visit (new tab, or after the browser is closed) starts on the landing page.
+const SESSION_KEY = 'campusbuddy_session_user'
+
+function loadSessionUser() {
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(SESSION_KEY))
+    return saved && typeof saved === 'object' && saved.id ? saved : null
+  } catch {
+    return null
+  }
+}
+
+function saveSessionUser(user) {
+  try {
+    if (user) sessionStorage.setItem(SESSION_KEY, JSON.stringify(user))
+    else sessionStorage.removeItem(SESSION_KEY)
+  } catch {
+    // storage unavailable: the login just won't survive a reload
+  }
 }
 
 function App() {
-  const [loggedUser, setLoggedUser] = useState(null)
-  const [currentPage, setCurrentPage] = useState('landing')
+  const [loggedUser, setLoggedUser] = useState(loadSessionUser)
+  const [currentPage, setCurrentPage] = useState(() => (loadSessionUser() ? 'main' : 'landing'))
   const [authMode, setAuthMode] = useState(null)
 
   const handleAuthSuccess = (userData) => {
     setLoggedUser(userData)
+    saveSessionUser(userData)
     setAuthMode(null)
     setCurrentPage('main')
   }
 
   const handleLogout = () => {
     setLoggedUser(null)
+    saveSessionUser(null)
     setCurrentPage('landing')
   }
 
   const handleUsernameChanged = (newUsername) => {
-    setLoggedUser((user) => ({ ...user, username: newUsername }))
+    const updated = { ...loggedUser, username: newUsername }
+    setLoggedUser(updated)
+    saveSessionUser(updated)
   }
 
   return (

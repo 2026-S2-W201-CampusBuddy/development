@@ -1,0 +1,63 @@
+.studyrooms-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 10, 30, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.studyrooms-modal {
+  position: relative;
+  width: min(500px, 90%);
+  padding: 30px;
+  border-radius: 25px;
+  background: linear-gradient(
+    135deg,
+    rgba(24, 54, 85, 0.96),
+    rgba(58, 42, 95, 0.96)
+  );
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.studyrooms-close {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  border: none;
+  background: transparent;
+  color: white;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.studyrooms-subtitle {
+  opacity: 0.8;
+}
+
+.studyrooms-modal select,
+.studyrooms-modal input {
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  font-size: 15px;
+}
+
+.studyrooms-book {
+  margin-top: 10px;
+  padding: 12px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.studyrooms-message {
+  margin-top: 10px;
+  font-weight: 600;
+}
