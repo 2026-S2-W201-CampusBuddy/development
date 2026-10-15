@@ -1,9 +1,25 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import './Carousel.css'
 
 export default function Carousel({ features, onActionClick }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
+  const touchStartX = useRef(null)
+
+  // Swipe support for touch screens
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX
+    setIsPaused(true)
+  }
+  const handleTouchEnd = (e) => {
+    setIsPaused(false)
+    if (touchStartX.current === null) return
+    const deltaX = e.changedTouches[0].clientX - touchStartX.current
+    touchStartX.current = null
+    if (Math.abs(deltaX) < 40) return
+    const step = deltaX < 0 ? 1 : -1
+    setActiveIndex((prev) => (prev + step + features.length) % features.length)
+  }
 
   useEffect(() => {
     if (isPaused) return
@@ -28,8 +44,10 @@ export default function Carousel({ features, onActionClick }) {
     <>
       <section 
         className="carouselStage"
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
+        onPointerEnter={(e) => { if (e.pointerType === 'mouse') setIsPaused(true) }}
+        onPointerLeave={(e) => { if (e.pointerType === 'mouse') setIsPaused(false) }}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
       >
         {features.map((feature, idx) => (
           <div

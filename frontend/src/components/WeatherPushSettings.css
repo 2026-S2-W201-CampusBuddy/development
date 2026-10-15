@@ -1,0 +1,117 @@
+/* Scheduled weather alert box (inside the Weather modal) */
+.weatherPushBox {
+  margin-top: 12px;
+  padding: 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+}
+
+.weatherPushHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.weatherPushIcon {
+  font-size: 22px;
+}
+
+.weatherPushTitle {
+  font-family: var(--fontDisplay);
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.weatherPushSubtitle {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 2px;
+}
+
+.weatherPushStatus {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.weatherPushTimeRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.weatherPushTimeInput {
+  flex: 1 1 130px;
+  min-width: 0;
+  color-scheme: dark;            /* dark clock popup + visible picker icon */
+}
+
+.weatherPushActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.weatherPushActions .btnGlass,
+.weatherPushTimeRow .btnGlass {
+  font-size: 13.5px;
+  padding: 9px 18px;
+}
+
+.weatherPushBox .btnGlass:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.weatherPushHint {
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.weatherPushMessage {
+  font-size: 13px;
+  padding: 8px 12px;
+  border-radius: 10px;
+}
+
+.weatherPushMessage.success {
+  background: rgba(16, 185, 129, 0.14);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #6ee7b7;
+}
+
+.weatherPushMessage.error {
+  background: rgba(248, 113, 113, 0.14);
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  color: #fca5a5;
+}
+
+/* ------------------------------------------------------------------
+   The weather dialog got taller when the daily alert box was added. On
+   shorter browser windows it spilled off the top and bottom of the screen
+   with no way to scroll. Same fix the Rent dialog uses: cap the height and
+   scroll inside the dialog.
+   ------------------------------------------------------------------ */
+.modalDialog.weatherDialog {
+  max-height: 88vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+
+.modalDialog.weatherDialog::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modalDialog.weatherDialog::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 3px;
+}

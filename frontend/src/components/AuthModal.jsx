@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { registerUser, loginUser, verifyEmail, resendCode } from '../api'
+import TermsContent from './TermsContent'
+import { TERMS_VERSION } from '../termsVersion'
 import './AuthModal.css'
 
 const PENDING_KEY = 'campusbuddy_pending_verification_email'
@@ -57,7 +59,7 @@ export default function AuthModal({ authMode, onClose, onAuthSuccess, onSwitchMo
           setIsSubmitting(false)
           return
         }
-        await registerUser(username, email, password, agreedToTerms)
+        await registerUser(username, email, password, agreedToTerms, TERMS_VERSION)
         localStorage.setItem(PENDING_KEY, email) // remember it in case they close out
         setStep('verify')
       } else {
@@ -172,7 +174,7 @@ export default function AuthModal({ authMode, onClose, onAuthSuccess, onSwitchMo
                       onChange={(e) => setAgreedToTerms(e.target.checked)}
                     />
                     <span>
-                      I agree to the{' '}
+                      I have read and agree to the{' '}
                       <button
                         type="button"
                         className="linkToggle termsReadLink"
@@ -183,24 +185,7 @@ export default function AuthModal({ authMode, onClose, onAuthSuccess, onSwitchMo
                     </span>
                   </label>
 
-                  {isTermsExpanded && (
-                    <div className="termsTextBox">
-                      <p>
-                        By creating a CampusBuddy account, you agree that content you post —
-                        including Community posts, comments, and Peer Review ratings and
-                        comments — may be visible to other members of the relevant group
-                        or community. Peer Review ratings and comments are visible to every
-                        member of the group they're submitted under.
-                      </p>
-                      <p>
-                        Your email is used only for account verification and essential
-                        account-related messages. You are responsible for keeping your
-                        login details secure and for the accuracy of what you post.
-                        CampusBuddy is a university student project and is provided as-is,
-                        without warranty.
-                      </p>
-                    </div>
-                  )}
+                  {isTermsExpanded && <TermsContent />}
                 </div>
               )}
 
