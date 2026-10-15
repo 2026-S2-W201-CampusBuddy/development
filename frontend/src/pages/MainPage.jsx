@@ -286,15 +286,26 @@ export default function MainPage({ loggedUser, onUsernameChanged, onLogout }) {
         glowColor: 'rgba(236, 72, 153, 0.4)',
         action: () => setIsRentOpen(true),
       },
-      {
-        id: 'wellness',
-        icon: '🏃',
-        label: 'Wellness',
-        accentColor: '#10b981',
-        glowColor: 'rgba(16, 185, 129, 0.4)',
-        action: () =>
-          openCommunityModal('wellness', 'list'),
-      },
+      // Admins get the Admin bubble in this slot; everyone else sees Wellness.
+      // Keeps the 3-4-5-4-3 formation intact either way.
+      isAdmin
+        ? {
+            id: 'admin',
+            icon: '🛡️',
+            label: 'Admin',
+            accentColor: '#f87171',
+            glowColor: 'rgba(248, 113, 113, 0.4)',
+            action: () => setIsAdminOpen(true),
+          }
+        : {
+            id: 'wellness',
+            icon: '🏃',
+            label: 'Wellness',
+            accentColor: '#10b981',
+            glowColor: 'rgba(16, 185, 129, 0.4)',
+            action: () =>
+              openCommunityModal('wellness', 'list'),
+          },
       {
         id: 'food',
         icon: '🍽️',
@@ -340,18 +351,6 @@ export default function MainPage({ loggedUser, onUsernameChanged, onLogout }) {
         glowColor: 'rgba(246, 185, 59, 0.4)',
         action: () => setIsInternshipsOpen(true),
       },
-      ...(isAdmin
-        ? [
-            {
-              id: 'admin',
-              icon: '🛡️',
-              label: 'Admin',
-              accentColor: '#f87171',
-              glowColor: 'rgba(248, 113, 113, 0.4)',
-              action: () => setIsAdminOpen(true),
-            },
-          ]
-        : []),
     ],
   ]
 
