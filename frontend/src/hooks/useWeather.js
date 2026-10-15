@@ -37,6 +37,8 @@ export default function useWeather() {
     if (typeof Notification === 'undefined') return
     if (Notification.permission !== 'granted') return
     if (localStorage.getItem(NOTIFY_OPT_IN_KEY) !== 'true') return
+    // The scheduled push alert (useWeatherPush) already covers this person — avoid a duplicate
+    if (localStorage.getItem('campusbuddy_weather_push_enabled') === 'true') return
 
     const alreadyNotifiedToday = localStorage.getItem(NOTIFY_DATE_KEY) === todayKey()
     if (alreadyNotifiedToday) return

@@ -7,11 +7,19 @@ import RentModal from '../components/RentModal'
 import WorldClockModal from '../components/WorldClockModal'
 import useWeather from '../hooks/useWeather'
 import useRent from '../hooks/useRent'
+import useWeatherPush from '../hooks/useWeatherPush'
+import useReminderPush from '../hooks/useReminderPush'
+import useAlerts from '../hooks/useAlerts'
+import CalendarModal from '../components/CalendarModal'
+import AlertsModal from '../components/AlertsModal'
+import { formatOrbDate } from '../utils/calendarUtils'
 import MapModal from '../components/MapModal'
 import EventsModal from '../components/EventsModal'
 import FriendsModal from '../components/FriendsModal'
 import SettingsModal from '../components/SettingsModal'
 import CurrencyModal from '../components/CurrencyModal'
+import PeerReviewModal from '../components/PeerReviewModal'
+import AdminModal from '../components/AdminModal'
 import InternshipsModal from '../components/InternshipsModal'
 import StudyRoomsModal from '../components/StudyRoomsModal'
 import './MainPage.css'
@@ -27,25 +35,34 @@ export default function MainPage({ loggedUser, onUsernameChanged, onLogout }) {
   const [isFriendsOpen, setIsFriendsOpen] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [isCurrencyOpen, setIsCurrencyOpen] = useState(false)
+  const [isPeerReviewOpen, setIsPeerReviewOpen] = useState(false)
+  const [isAdminOpen, setIsAdminOpen] = useState(false)
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false)
+  const [isAlertsOpen, setIsAlertsOpen] = useState(false)
+  const [calendarFocusDate, setCalendarFocusDate] = useState(null)
   const [isInternshipsOpen, setIsInternshipsOpen] = useState(false)
   const [isStudyRoomsOpen, setIsStudyRoomsOpen] = useState(false)
 
-  // Pending friend requests counter for the main hub orb
+  const isAdmin = loggedUser?.role === 'admin'
+
   const [pendingRequestsCount, setPendingRequestsCount] = useState(0)
 
-  // Community modal configuration state
   const [communityState, setCommunityState] = useState({
     isOpen: false,
     view: 'list',
     category: 'general',
   })
 
-  // Fetched once here and shared with their modals via props below
   const weatherState = useWeather()
   const { weather } = weatherState
   const rentState = useRent()
 
-  // Real-time clock timer
+  const weatherPush = useWeatherPush(loggedUser)
+  const reminderPush = useReminderPush(loggedUser)
+  const alertsState = useAlerts(loggedUser, {
+    onOpenAlerts: () => setIsAlertsOpen(true),
+  })
+
   useEffect(() => {
     const updateTime = () => {
       const now = new Date()
@@ -55,12 +72,12 @@ export default function MainPage({ loggedUser, onUsernameChanged, onLogout }) {
     }
 
     updateTime()
+
     const timer = setInterval(updateTime, 1000)
 
     return () => clearInterval(timer)
   }, [])
 
-  // Function to fetch pending friend request count from backend
   const fetchPendingCount = async () => {
     const userId = loggedUser?.id || loggedUser?.user_id
 
@@ -73,6 +90,7 @@ export default function MainPage({ loggedUser, onUsernameChanged, onLogout }) {
 
       if (res.ok) {
         const data = await res.json()
+
         setPendingRequestsCount(
           Array.isArray(data) ? data.length : 0
         )
@@ -85,7 +103,6 @@ export default function MainPage({ loggedUser, onUsernameChanged, onLogout }) {
     }
   }
 
-  // Poll friend requests count on load and every 30 seconds
   useEffect(() => {
     fetchPendingCount()
 
@@ -97,25 +114,44 @@ export default function MainPage({ loggedUser, onUsernameChanged, onLogout }) {
     return () => clearInterval(interval)
   }, [loggedUser])
 
-  // Helper function to open Community modal with target category and view
   const openCommunityModal = (
     category = 'general',
     view = 'list'
   ) => {
     setCommunityState({
       isOpen: true,
-      view: view,
-      category: category,
+      view,
+      category,
     })
   }
 
-  // Helper function to close Community modal
   const closeCommunityModal = () => {
     setCommunityState((prev) => ({
       ...prev,
       isOpen: false,
     }))
   }
+
+  const openCalendar = (dateKey = null) => {
+    setCalendarFocusDate(dateKey)
+    setIsAlertsOpen(false)
+    setIsCalendarOpen(true)
+  }
+
+  const openAlerts = () => {
+    setIsCalendarOpen(false)
+    setIsAlertsOpen(true)
+  }
+
+  const calendarOrbLabel =
+    alertsState.todayCount > 0
+      ? `${formatOrbDate(new Date())} (${alertsState.todayCount})`
+      : formatOrbDate(new Date())
+
+  const alertsOrbLabel =
+    alertsState.unreadCount > 0
+      ? `Alerts (${alertsState.unreadCount})`
+      : 'Alerts'
 
   const weatherOrbIcon = weather
     ? weather.icon
@@ -126,7 +162,7 @@ export default function MainPage({ loggedUser, onUsernameChanged, onLogout }) {
     : 'Loading...'
 
   const honeycombRows = [
-    // Row 1 (3 Orbs)
+    // Row 1
     [
       {
         id: 'weather',
@@ -139,22 +175,22 @@ export default function MainPage({ loggedUser, onUsernameChanged, onLogout }) {
       {
         id: 'calendar',
         icon: '📅',
-        label: 'Feb 17',
+        label: calendarOrbLabel,
         accentColor: '#38bdf8',
         glowColor: 'rgba(56, 189, 248, 0.4)',
-        action: () => alert('Calendar'),
+        action: () => openCalendar(),
       },
       {
         id: 'alerts',
         icon: '🔔',
-        label: 'Alerts',
+        label: alertsOrbLabel,
         accentColor: '#f87171',
         glowColor: 'rgba(248, 113, 113, 0.4)',
-        action: () => alert('Notifications'),
+        action: openAlerts,
       },
     ],
 
-    // Row 2 (4 Orbs)
+    // Row 2
     [
       {
         id: 'market',
@@ -165,13 +201,12 @@ export default function MainPage({ loggedUser, onUsernameChanged, onLogout }) {
         action: () => setIsGroceryOpen(true),
       },
       {
-        id: 'quickAdd',
-        icon: '➕',
-        label: 'New Post',
+        id: 'peerReview',
+        icon: '📝',
+        label: 'Peer Review',
         accentColor: '#a78bfa',
         glowColor: 'rgba(167, 139, 250, 0.4)',
-        action: () =>
-          openCommunityModal('general', 'new'),
+        action: () => setIsPeerReviewOpen(true),
       },
       {
         id: 'community',
@@ -195,7 +230,7 @@ export default function MainPage({ loggedUser, onUsernameChanged, onLogout }) {
       },
     ],
 
-    // Row 3 (5 Orbs with Central Clock)
+    // Row 3
     [
       {
         id: 'study',
@@ -241,7 +276,7 @@ export default function MainPage({ loggedUser, onUsernameChanged, onLogout }) {
       },
     ],
 
-    // Row 4 (4 Orbs)
+    // Row 4
     [
       {
         id: 'radio',
@@ -279,7 +314,7 @@ export default function MainPage({ loggedUser, onUsernameChanged, onLogout }) {
       },
     ],
 
-    // Row 5 (3 Orbs)
+    // Row 5
     [
       {
         id: 'settings',
@@ -305,6 +340,18 @@ export default function MainPage({ loggedUser, onUsernameChanged, onLogout }) {
         glowColor: 'rgba(246, 185, 59, 0.4)',
         action: () => setIsInternshipsOpen(true),
       },
+      ...(isAdmin
+        ? [
+            {
+              id: 'admin',
+              icon: '🛡️',
+              label: 'Admin',
+              accentColor: '#f87171',
+              glowColor: 'rgba(248, 113, 113, 0.4)',
+              action: () => setIsAdminOpen(true),
+            },
+          ]
+        : []),
     ],
   ]
 
@@ -319,6 +366,7 @@ export default function MainPage({ loggedUser, onUsernameChanged, onLogout }) {
         isOpen={isWeatherOpen}
         onClose={() => setIsWeatherOpen(false)}
         {...weatherState}
+        push={weatherPush}
       />
 
       <CommunityModal
@@ -360,6 +408,26 @@ export default function MainPage({ loggedUser, onUsernameChanged, onLogout }) {
         onClose={() => setIsClockOpen(false)}
       />
 
+      <CalendarModal
+        isOpen={isCalendarOpen}
+        onClose={() => setIsCalendarOpen(false)}
+        currentUser={loggedUser}
+        push={reminderPush}
+        onChanged={alertsState.refreshSummary}
+        initialDate={calendarFocusDate}
+        onOpenAlerts={openAlerts}
+      />
+
+      <AlertsModal
+        isOpen={isAlertsOpen}
+        onClose={() => setIsAlertsOpen(false)}
+        currentUser={loggedUser}
+        push={reminderPush}
+        onChanged={alertsState.refreshSummary}
+        unreadCount={alertsState.unreadCount}
+        onOpenCalendar={openCalendar}
+      />
+
       <FriendsModal
         isOpen={isFriendsOpen}
         onClose={() => {
@@ -382,6 +450,12 @@ export default function MainPage({ loggedUser, onUsernameChanged, onLogout }) {
         onClose={() => setIsCurrencyOpen(false)}
       />
 
+      <PeerReviewModal
+        isOpen={isPeerReviewOpen}
+        onClose={() => setIsPeerReviewOpen(false)}
+        currentUser={loggedUser}
+      />
+
       <InternshipsModal
         isOpen={isInternshipsOpen}
         onClose={() => setIsInternshipsOpen(false)}
@@ -391,6 +465,14 @@ export default function MainPage({ loggedUser, onUsernameChanged, onLogout }) {
         isOpen={isStudyRoomsOpen}
         onClose={() => setIsStudyRoomsOpen(false)}
       />
+
+      {isAdmin && (
+        <AdminModal
+          isOpen={isAdminOpen}
+          onClose={() => setIsAdminOpen(false)}
+          currentUser={loggedUser}
+        />
+      )}
     </main>
   )
 }

@@ -1,0 +1,80 @@
+/* Admin Modal — reuses .modalBackdrop / .modalDialog / .modalCloseBtn /
+   .weatherStatusText / .prTabRow / .prTab / .prTabActive / .prPanel /
+   .prMemberList / .prMemberRow / .prMemberName / .prStatusBadge /
+   .prMyRatingGrid from shared + PeerReviewModal styles */
+
+.adminDialog {
+  max-width: 480px;
+  max-height: 88vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+
+.adminDialog::-webkit-scrollbar {
+  width: 6px;
+}
+
+.adminDialog::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+}
+
+.adminRatingCard {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  margin-bottom: 4px;
+}
+
+.adminFlagged {
+  background: rgba(248, 113, 113, 0.08);
+  border-color: rgba(248, 113, 113, 0.35);
+}
+
+.adminRatingHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+  color: #ffffff;
+  font-size: 13.5px;
+}
+
+.adminGroupTag {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.adminFlagNote {
+  font-size: 11px;
+  color: #f87171;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.adminComments {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.adminComments p {
+  margin: 0 0 4px;
+}
+
+.adminComments em {
+  color: rgba(255, 255, 255, 0.45);
+  font-style: normal;
+  font-weight: 600;
+}
+
+.adminTimestamp {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.35);
+  margin-top: 8px;
+  text-align: right;
+}

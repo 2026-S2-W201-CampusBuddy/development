@@ -3,7 +3,7 @@ import './Navbar.css'
 export default function Navbar({ currentPage, onNavigate, onOpenAuth, onLogout, loggedUser }) {
   return (
     <header className="navbarWrapper">
-      <div className="brandLogo" onClick={() => onNavigate('landing')}>
+      <div className="brandLogo" onClick={() => onNavigate(loggedUser ? 'main' : 'landing')}>
         <div className="brandSymbol">✦</div>
         <span className="brandTitle">CampusBuddy</span>
       </div>

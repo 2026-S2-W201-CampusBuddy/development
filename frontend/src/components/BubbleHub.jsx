@@ -62,7 +62,11 @@ export default function BubbleHub({ honeycombRows, liveTime }) {
                   '--pushX': pushX,
                   '--pushY': pushY
                 }}
-                onMouseEnter={() => setHoveredCoords({ id: bubble.id, rowIdx, colIdx, rowLength: row.length })}
+                onPointerEnter={(e) => {
+                  if (e.pointerType === 'mouse') {
+                    setHoveredCoords({ id: bubble.id, rowIdx, colIdx, rowLength: row.length })
+                  }
+                }}
                 onClick={bubble.action}
               >
                 {bubble.isClock ? (

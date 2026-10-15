@@ -1,4 +1,5 @@
 import './WeatherModal.css'
+import WeatherPushSettings from './WeatherPushSettings'
 
 // This component no longer calls useWeather() itself — it receives
 // everything as props from MainPage instead, so the app fetches
@@ -15,6 +16,7 @@ export default function WeatherModal({
   enableNotifications,
   disableNotifications,
   refresh,
+  push,
 }) {
   if (!isOpen) return null
 
@@ -86,6 +88,8 @@ export default function WeatherModal({
                 </button>
               )}
             </div>
+
+            {push && <WeatherPushSettings push={push} />}
           </>
         )}
       </div>
