@@ -2,6 +2,8 @@
 # people, submit ratings, and see what.
 from models.peer_review_model import PeerReviewGroup, PeerReviewGroupMembership, PeerReviewRating
 from models.user_model import User
+from models.peer_review_extras_model import PeerReviewRatingTag, PeerReviewScorePref, PeerReviewReport
+from services import peer_score
 
 RATING_CATEGORIES = ['documentation_rating', 'product_rating', 'attendance_rating', 'overall_rating']
 MIN_RATING = 1
@@ -103,6 +105,9 @@ def submit_rating_logic(rater_username, group_id, rated_username, scores):
     if error:
         return error
 
+    if not isinstance(scores, dict):
+        return {"status": "error", "message": "scores must be an object"}, 400
+
     group = PeerReviewGroup.get_by_id(group_id)
     if not group:
         return {"status": "error", "message": "Group not found"}, 404
@@ -130,7 +135,21 @@ def submit_rating_logic(rater_username, group_id, rated_username, scores):
             return {"status": "error", "message": f"{field} must be between {MIN_RATING} and {MAX_RATING}"}, 400
         scores[field] = value
 
+    # Behaviour presets + ONE short optional note (visible to admins only).
+    # Per-category free-text comments are no longer collected: free text is where
+    # defamatory statements live, and presets are far easier for admins to review.
+    try:
+        tags = peer_score.clean_behaviour_tags(scores.get('behaviour_tags'))
+        note = peer_score.clean_note(scores.get('overall_comment'))
+    except ValueError as exc:
+        return {"status": "error", "message": str(exc)}, 400
+    scores['documentation_comment'] = None
+    scores['product_comment'] = None
+    scores['attendance_comment'] = None
+    scores['overall_comment'] = note
+
     rating = PeerReviewRating.upsert_rating(group_id, rater.id, rated_user.id, scores)
+    PeerReviewRatingTag.replace_for_rating(rating.id, tags)
     return {
         "status": "success",
         "message": "Rating submitted",
@@ -192,6 +211,7 @@ def get_my_ratings_given_logic(username):
         return error
 
     ratings = PeerReviewRating.get_ratings_given_by(user.id)
+    tags_by_rating = PeerReviewRatingTag.tags_by_rating([r.id for r in ratings])
     results = []
     for r in ratings:
         rated_user = User.query.get(r.rated_id)
@@ -208,9 +228,35 @@ def get_my_ratings_given_logic(username):
             "attendanceComment": r.attendance_comment,
             "overallRating": r.overall_rating,
             "overallComment": r.overall_comment,
+            "behaviourTags": [
+                {"code": code, "label": peer_score.TAG_LABELS.get(code, code)} for code in tags_by_rating.get(r.id, [])
+            ],
         })
 
     return {"status": "success", "message": "Ratings retrieved", "data": {"ratings": results}}, 200
+
+
+def build_score_view(target, viewer_is_self=False):
+    """
+    What a score looks like on screen. Never contains an exact rater count, and
+    for anyone but the person themself it is hidden entirely when scores are
+    opt-in and they haven't opted in.
+    """
+    opted_in = PeerReviewScorePref.is_opted_in(target.id)
+    visible = peer_score.is_score_visible(opted_in)
+
+    view = {
+        "username": target.username,
+        "displayMode": peer_score.effective_mode(),
+        "scoreVisible": visible,
+        "underReview": PeerReviewReport.has_open_dispute(target.id),
+        "policy": peer_score.policy_summary(),
+    }
+    if visible or viewer_is_self:
+        view.update(PeerReviewRating.get_public_overall_score(target.id))
+    else:
+        view.update({"meetsThreshold": False, "overallScore": None, "raterCountLabel": None})
+    return view
 
 
 def get_public_score_logic(target_username):
@@ -218,9 +264,8 @@ def get_public_score_logic(target_username):
     if not target:
         return {"status": "error", "message": f"No account found for '{target_username}'"}, 404
 
-    score_data = PeerReviewRating.get_public_overall_score(target.id)
     return {
         "status": "success",
         "message": "Score retrieved",
-        "data": {"username": target.username, **score_data}
+        "data": build_score_view(target),
     }, 200

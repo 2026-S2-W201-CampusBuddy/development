@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import usePeerReview from '../hooks/usePeerReview'
 import TermsContent from './TermsContent'
+import PeerReviewReportForm from './PeerReviewReportForm'
+import usePeerScore from '../hooks/usePeerScore'
 import './PeerReviewModal.css'
+import './PeerReviewExtras.css'
 
 const CATEGORIES = [
   { key: 'documentation', label: 'Documentation', hint: 'Trello board, diagrams, presentation' },
@@ -27,6 +30,48 @@ function StarPicker({ value, onChange }) {
   )
 }
 
+const REPORT_STATUS_LABEL = { open: 'Open', upheld: 'Upheld', dismissed: 'No change' }
+
+function formatWhen(iso) {
+  return new Date(iso).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })
+}
+
+// The score itself, explained in words that match whichever rule-set is live
+// (the server tells us in `policy`). In the full safeguards it never shows an
+// exact rating count; in the demo profile it says "Average of N ratings".
+function ScoreBody({ view, isSelf = false }) {
+  const policy = view.policy || {}
+  const delay = policy.delayDays ?? 0
+  const minRaters = policy.minRaters ?? 3
+  const minGroups = policy.minGroups ?? 1
+
+  if (!isSelf && !view.scoreVisible) {
+    return <div className="prScoreSubtext">This student hasn't chosen to show their score.</div>
+  }
+  if (view.meetsThreshold) {
+    const basis = view.ratingCount
+      ? `Average of ${view.ratingCount} rating${view.ratingCount === 1 ? '' : 's'}`
+      : `Based on ratings from ${view.raterCountLabel} group members${minGroups > 1 ? ' across different groups' : ''}`
+    return (
+      <>
+        <div className="prScoreNumber">{Number(view.overallScore).toFixed(1)} / 5</div>
+        <div className="prScoreSubtext">
+          {basis}.
+          {delay > 0 ? ` New ratings take ${delay} days to count.` : ''}
+          {(policy.roundingStep ?? 0) >= 0.5 ? ' Scores are rounded to the nearest half point.' : ''}
+        </div>
+      </>
+    )
+  }
+  return (
+    <div className="prScoreSubtext">
+      {isSelf ? "You don't have a public score yet." : 'No public score yet.'} One appears once at least {minRaters} group
+      members{minGroups > 1 ? `, across ${minGroups} different groups,` : ''} have rated {isSelf ? 'you' : 'them'}
+      {delay > 0 ? ` and each rating is ${delay} days old` : ''}.
+    </div>
+  )
+}
+
 export default function PeerReviewModal({ isOpen, onClose, currentUser }) {
   const username = currentUser?.username || (typeof currentUser === 'string' ? currentUser : '')
   const {
@@ -35,6 +80,7 @@ export default function PeerReviewModal({ isOpen, onClose, currentUser }) {
     createGroup, inviteMember, respondToInvite, submitRating,
     lookupUsername, setLookupUsername, lookupResult, lookupLoading, lookupError, lookupScore,
   } = usePeerReview(username, isOpen)
+  const { options, myScore, scoreLoading, scoreError, loadMyScore, setVisibility, fileReport } = usePeerScore(username, isOpen)
 
   const [tab, setTab] = useState('groups')
   const [termsTicked, setTermsTicked] = useState(false)
@@ -43,12 +89,16 @@ export default function PeerReviewModal({ isOpen, onClose, currentUser }) {
 
   const [rateGroupId, setRateGroupId] = useState(null)
   const [rateTarget, setRateTarget] = useState(null)
-  const [scores, setScores] = useState({
-    documentation_rating: 0, documentation_comment: '',
-    product_rating: 0, product_comment: '',
-    attendance_rating: 0, attendance_comment: '',
-    overall_rating: 0, overall_comment: '',
+  const emptyScores = () => ({
+    documentation_rating: 0,
+    product_rating: 0,
+    attendance_rating: 0,
+    overall_rating: 0,
+    behaviour_tags: [],
+    overall_comment: '', // the one short optional note — admins only
   })
+  const [scores, setScores] = useState(emptyScores)
+  const [reportDraft, setReportDraft] = useState(null) // { kind: 'dispute' | 'report', subject }
   const [rateSubmitting, setRateSubmitting] = useState(false)
   const [rateSuccess, setRateSuccess] = useState(false)
 
@@ -110,13 +160,21 @@ export default function PeerReviewModal({ isOpen, onClose, currentUser }) {
     setRateGroupId(groupId)
     setRateTarget(memberUsername)
     setRateSuccess(false)
-    setScores({
-      documentation_rating: 0, documentation_comment: '',
-      product_rating: 0, product_comment: '',
-      attendance_rating: 0, attendance_comment: '',
-      overall_rating: 0, overall_comment: '',
-    })
+    setScores(emptyScores())
     setTab('rate')
+  }
+
+  // Ticking a behaviour un-ticks its opposite (you can't have both met AND missed deadlines)
+  const toggleTag = (code) => {
+    setScores((prev) => {
+      if (prev.behaviour_tags.includes(code)) {
+        return { ...prev, behaviour_tags: prev.behaviour_tags.filter((t) => t !== code) }
+      }
+      const opposites = (options?.conflicts || [])
+        .filter((pair) => pair.includes(code))
+        .map((pair) => pair.find((t) => t !== code))
+      return { ...prev, behaviour_tags: [...prev.behaviour_tags.filter((t) => !opposites.includes(t)), code] }
+    })
   }
 
   const handleSubmitRating = async (e) => {
@@ -154,6 +212,9 @@ export default function PeerReviewModal({ isOpen, onClose, currentUser }) {
           </button>
           <button className={`prTab ${tab === 'mine' ? 'prTabActive' : ''}`} onClick={() => setTab('mine')}>
             My Ratings
+          </button>
+          <button className={`prTab ${tab === 'score' ? 'prTabActive' : ''}`} onClick={() => { setTab('score'); loadMyScore() }}>
+            My Score
           </button>
           <button className={`prTab ${tab === 'lookup' ? 'prTabActive' : ''}`} onClick={() => setTab('lookup')}>
             Look Up
@@ -251,7 +312,7 @@ export default function PeerReviewModal({ isOpen, onClose, currentUser }) {
 
             {rateSuccess ? (
               <div className="prSuccessBox">
-                <p>Rating submitted. Only you can see what you wrote.</p>
+                <p>Rating submitted. The person you rated can't see it — only you and CampusBuddy admins can. It counts towards their public score after {options?.policy?.delayDays ?? 7} days.</p>
                 <button className="btnGlass btnFullWidth" onClick={() => setTab('groups')}>
                   Back to groups
                 </button>
@@ -268,14 +329,50 @@ export default function PeerReviewModal({ isOpen, onClose, currentUser }) {
                       value={scores[`${cat.key}_rating`]}
                       onChange={(n) => setScores((prev) => ({ ...prev, [`${cat.key}_rating`]: n }))}
                     />
-                    <textarea
-                      className="liquidInput prCommentBox"
-                      placeholder="Optional comment..."
-                      value={scores[`${cat.key}_comment`]}
-                      onChange={(e) => setScores((prev) => ({ ...prev, [`${cat.key}_comment`]: e.target.value }))}
-                    />
                   </div>
                 ))}
+
+                <div className="prCategoryBlock">
+                  <div className="prCategoryLabelRow">
+                    <span className="prCategoryLabel">Behaviours</span>
+                    <span className="prCategoryHint">Tick any that apply (optional)</span>
+                  </div>
+                  {[{ title: 'Went well', positive: true }, { title: 'Could improve', positive: false }].map((group) => (
+                    <div key={group.title} className="prTagGroup">
+                      <div className="prTagGroupTitle">{group.title}</div>
+                      <div className="prTagList">
+                        {(options?.tags || []).filter((t) => t.positive === group.positive).map((t) => {
+                          const on = scores.behaviour_tags.includes(t.code)
+                          return (
+                            <label key={t.code} className={`prTagPill ${on ? `prTagPillOn ${group.positive ? 'prTagPositive' : 'prTagNegative'}` : ''}`}>
+                              <input type="checkbox" checked={on} onChange={() => toggleTag(t.code)} />
+                              {t.label}
+                            </label>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                  {!options && <p className="prAdminOnlyNote">Loading options…</p>}
+                </div>
+
+                <div className="prCategoryBlock">
+                  <div className="prCategoryLabelRow">
+                    <span className="prCategoryLabel">Short note</span>
+                    <span className="prCategoryHint">Optional</span>
+                  </div>
+                  <p className="prAdminOnlyNote">
+                    Only CampusBuddy admins can read this — never the person you're rating. Keep it factual.
+                  </p>
+                  <textarea
+                    className="liquidInput prNoteBox"
+                    placeholder="e.g. Missed the last two team meetings"
+                    maxLength={options?.noteMaxLength || 300}
+                    value={scores.overall_comment}
+                    onChange={(e) => setScores((prev) => ({ ...prev, overall_comment: e.target.value }))}
+                  />
+                  <div className="prCharCount">{scores.overall_comment.length}/{options?.noteMaxLength || 300}</div>
+                </div>
 
                 <button type="submit" className="btnGlass btnPrimary btnFullWidth" disabled={rateSubmitting}>
                   {rateSubmitting ? 'Submitting...' : 'Submit Rating'}
@@ -302,8 +399,89 @@ export default function PeerReviewModal({ isOpen, onClose, currentUser }) {
                   <span>Attendance: {r.attendanceRating}★</span>
                   <span>Overall: {r.overallRating}★</span>
                 </div>
+                {r.behaviourTags?.length > 0 && (
+                  <div className="prTagChips">
+                    {r.behaviourTags.map((t) => <span key={t.code} className="prTagChip">{t.label}</span>)}
+                  </div>
+                )}
               </div>
             ))}
+          </div>
+        )}
+
+        {tab === 'score' && (
+          <div className="prPanel">
+            {scoreLoading && !myScore && <p className="weatherStatusText">Loading your score...</p>}
+            {scoreError && <p className="weatherStatusText">{scoreError}</p>}
+
+            {myScore && (
+              <>
+                <div className="prScoreCard">
+                  <div className="prScoreUsername">Your score</div>
+                  {myScore.underReview && <div className="prUnderReview">⚖️ Under review</div>}
+                  <ScoreBody view={myScore} isSelf />
+                </div>
+
+                {myScore.displayMode === 'opt_in' && (
+                  <label className="prToggleRow">
+                    <input type="checkbox" checked={myScore.optedIn} onChange={(e) => setVisibility(e.target.checked)} />
+                    <span>
+                      Show my score to other CampusBuddy students
+                      <span className="prReportMeta"> — {myScore.optedIn ? 'it is visible when someone looks you up.' : 'right now only you can see it.'}</span>
+                    </span>
+                  </label>
+                )}
+
+                <div className="prDisputeBox">
+                  <div>
+                    <strong>Think your score is unfair?</strong>
+                    <div>An admin reviews every dispute within {myScore.policy.responseHours} hours.</div>
+                    {!myScore.canDispute && <div className="prReportMeta">You already have a dispute open.</div>}
+                  </div>
+                  <button
+                    className="btnGlass"
+                    disabled={!myScore.canDispute}
+                    onClick={() => { setReportDraft({ kind: 'dispute', subject: username }); setTab('report') }}
+                  >
+                    Dispute my score
+                  </button>
+                </div>
+
+                {myScore.reports.length > 0 && <div className="prSectionTitle">Your disputes and reports</div>}
+                {myScore.reports.map((r) => (
+                  <div key={r.reportId} className="prReportItem">
+                    <div className="prReportItemHeader">
+                      <span>{r.kind === 'dispute' ? 'Dispute of my score' : `Report about ${r.subject}`}</span>
+                      <span className={`prReportStatus prReportStatus-${r.status}`}>{REPORT_STATUS_LABEL[r.status]}</span>
+                    </div>
+                    <div className="prReportMeta">{r.reasonLabel} · filed {formatWhen(r.createdAt)}</div>
+                    <div className="prReportMeta">
+                      {r.status === 'open' && `An admin will respond by ${formatWhen(r.dueAt)}.`}
+                      {r.status === 'upheld' && `Reviewed ${formatWhen(r.resolvedAt)} — upheld${r.ratingsRemoved ? `, ${r.ratingsRemoved} rating${r.ratingsRemoved === 1 ? '' : 's'} removed` : ''}.`}
+                      {r.status === 'dismissed' && `Reviewed ${formatWhen(r.resolvedAt)} — no change was made.`}
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
+          </div>
+        )}
+
+        {tab === 'report' && reportDraft && (
+          <div className="prPanel">
+            <PeerReviewReportForm
+              kind={reportDraft.kind}
+              subjectUsername={reportDraft.subject}
+              options={options}
+              onSubmit={fileReport}
+              onCancel={() => setTab(reportDraft.kind === 'dispute' ? 'score' : 'lookup')}
+              onDone={() => {
+                const back = reportDraft.kind === 'dispute' ? 'score' : 'lookup'
+                setReportDraft(null)
+                setTab(back)
+                if (back === 'score') loadMyScore()
+              }}
+            />
           </div>
         )}
 
@@ -326,16 +504,24 @@ export default function PeerReviewModal({ isOpen, onClose, currentUser }) {
             {lookupResult && !lookupLoading && (
               <div className="prScoreCard">
                 <div className="prScoreUsername">{lookupResult.username}</div>
-                {lookupResult.meetsThreshold ? (
-                  <>
-                    <div className="prScoreNumber">{lookupResult.overallScore} / 5</div>
-                    <div className="prScoreSubtext">Based on {lookupResult.raterCount} confirmed group members</div>
-                  </>
+                {lookupResult.underReview && <div className="prUnderReview">⚖️ Under review</div>}
+                {lookupResult.username === username ? (
+                  <div className="prScoreSubtext">That's you — open My Score to see your score and manage disputes.</div>
                 ) : (
-                  <div className="prScoreSubtext">
-                    Not enough ratings yet ({lookupResult.raterCount}/3 needed)
-                  </div>
+                  <ScoreBody view={lookupResult} />
                 )}
+                <div className="prScoreActions">
+                  {lookupResult.username === username ? (
+                    <button className="btnGlass prSmallBtn" onClick={() => { setTab('score'); loadMyScore() }}>Go to My Score</button>
+                  ) : (
+                    <button
+                      className="btnGlass prSmallBtn"
+                      onClick={() => { setReportDraft({ kind: 'report', subject: lookupResult.username }); setTab('report') }}
+                    >
+                      Report a concern
+                    </button>
+                  )}
+                </div>
               </div>
             )}
           </div>
