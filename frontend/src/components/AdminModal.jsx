@@ -1,10 +1,13 @@
 import { useState, useEffect, useCallback } from 'react'
-import { getAdminAllRatings, getAdminAllGroups } from '../api'
+import { getAdminAllRatings, getAdminAllGroups, getAdminReports } from '../api'
+import AdminReportsPanel from './AdminReportsPanel'
 import './AdminModal.css'
+import './PeerReviewExtras.css'
 
 export default function AdminModal({ isOpen, onClose, currentUser }) {
   const username = currentUser?.username || (typeof currentUser === 'string' ? currentUser : '')
-  const [tab, setTab] = useState('ratings')
+  const [tab, setTab] = useState('reports')
+  const [reportCounts, setReportCounts] = useState(null) // open / overdue / urgent disputes
   const [ratings, setRatings] = useState([])
   const [groups, setGroups] = useState([])
   const [loading, setLoading] = useState(true)
@@ -14,10 +17,11 @@ export default function AdminModal({ isOpen, onClose, currentUser }) {
     if (!username) return
     setLoading(true)
     setError('')
-    Promise.all([getAdminAllRatings(username), getAdminAllGroups(username)])
-      .then(([ratingsJson, groupsJson]) => {
+    Promise.all([getAdminAllRatings(username), getAdminAllGroups(username), getAdminReports(username)])
+      .then(([ratingsJson, groupsJson, reportsJson]) => {
         setRatings(ratingsJson.data.ratings)
         setGroups(groupsJson.data.groups)
+        setReportCounts(reportsJson.data.counts)
       })
       .catch((err) => setError(err.message || 'Could not load admin data — are you sure this account has admin access?'))
       .finally(() => setLoading(false))
@@ -40,6 +44,10 @@ export default function AdminModal({ isOpen, onClose, currentUser }) {
         </div>
 
         <div className="prTabRow">
+          <button className={`prTab ${tab === 'reports' ? 'prTabActive' : ''}`} onClick={() => setTab('reports')}>
+            Disputes
+            {reportCounts?.open > 0 && <span className="adminBadge">{reportCounts.open}</span>}
+          </button>
           <button className={`prTab ${tab === 'ratings' ? 'prTabActive' : ''}`} onClick={() => setTab('ratings')}>
             All Ratings
           </button>
@@ -50,6 +58,10 @@ export default function AdminModal({ isOpen, onClose, currentUser }) {
 
         {loading && <p className="weatherStatusText">Loading...</p>}
         {!loading && error && <p className="weatherStatusText">{error}</p>}
+
+        {!loading && !error && tab === 'reports' && (
+          <AdminReportsPanel username={username} onCountsChange={setReportCounts} />
+        )}
 
         {!loading && !error && tab === 'ratings' && (
           <div className="prPanel">
@@ -69,6 +81,11 @@ export default function AdminModal({ isOpen, onClose, currentUser }) {
                   <span>Attendance: {r.attendanceRating}★</span>
                   <span>Overall: {r.overallRating}★</span>
                 </div>
+                {r.behaviourTags?.length > 0 && (
+                  <div className="prTagChips">
+                    {r.behaviourTags.map((t) => <span key={t} className="prTagChip">{t}</span>)}
+                  </div>
+                )}
                 {(r.documentationComment || r.productComment || r.attendanceComment || r.overallComment) && (
                   <div className="adminComments">
                     {r.documentationComment && <p><em>Documentation:</em> {r.documentationComment}</p>}

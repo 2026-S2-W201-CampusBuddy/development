@@ -490,3 +490,54 @@ export async function sendReminderTest(userId, endpoint) {
   })
   return handleResponse(response)
 }
+
+// ---------------------------------------------------------------------------
+// Peer Review safeguards: options, My Score, disputes/reports, admin queue
+// ---------------------------------------------------------------------------
+export async function getPeerReviewOptions() {
+  const response = await fetch(`${BASE_URL}/api/peer-review/options`)
+  return handleResponse(response)
+}
+
+export async function getPeerReviewMyScore(username) {
+  const response = await fetch(`${BASE_URL}/api/peer-review/my-score?username=${encodeURIComponent(username)}`)
+  return handleResponse(response)
+}
+
+export async function setPeerReviewScoreVisibility(username, show) {
+  const response = await fetch(`${BASE_URL}/api/peer-review/score-visibility`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, show }),
+  })
+  return handleResponse(response)
+}
+
+export async function createPeerReviewReport(username, { kind, subjectUsername, reason, details }) {
+  const response = await fetch(`${BASE_URL}/api/peer-review/reports`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, kind, subjectUsername, reason, details }),
+  })
+  return handleResponse(response)
+}
+
+export async function getAdminReports(username) {
+  const response = await fetch(`${BASE_URL}/api/admin/peer-review/reports?username=${encodeURIComponent(username)}`)
+  return handleResponse(response)
+}
+
+export async function getAdminReportDetail(username, reportId) {
+  const response = await fetch(`${BASE_URL}/api/admin/peer-review/reports/${reportId}?username=${encodeURIComponent(username)}`)
+  return handleResponse(response)
+}
+
+export async function resolveAdminReport(username, reportId, { outcome, note, removeRatingIds = [] }) {
+  const response = await fetch(`${BASE_URL}/api/admin/peer-review/reports/${reportId}/resolve`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, outcome, note, removeRatingIds }),
+  })
+  return handleResponse(response)
+}
+

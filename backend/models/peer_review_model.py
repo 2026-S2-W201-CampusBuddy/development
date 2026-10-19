@@ -19,7 +19,10 @@
 from datetime import datetime
 from extensions import db
 
-MIN_RATERS_FOR_PUBLIC_SCORE = 3
+# The thresholds, the 7-day delay and the rounding all live in services/peer_score.py
+from services import peer_score
+
+MIN_RATERS_FOR_PUBLIC_SCORE = peer_score.MIN_RATERS_FOR_PUBLIC_SCORE
 
 
 class PeerReviewGroup(db.Model):
@@ -189,9 +192,13 @@ class PeerReviewRating(db.Model):
         person has personally confirmed membership in that specific
         group — this stops a stranger from fabricating a group and
         tanking someone's real public reputation without their
-        knowledge. Returns None if below the minimum-raters threshold,
-        so a single rating (or two) is never directly exposed as a
-        visible number."""
+        knowledge.
+
+        The rules for what is then shown live in services/peer_score.py:
+        ratings must be at least 7 days old, come from at least 3 different
+        people across at least 2 different groups, and the result is rounded
+        and carries only a "3+" label — never an exact count — so nobody can
+        work out what the newest rating was."""
         ratings = db.session.query(PeerReviewRating).join(
             PeerReviewGroupMembership,
             db.and_(
@@ -201,17 +208,4 @@ class PeerReviewRating(db.Model):
             )
         ).filter(PeerReviewRating.rated_id == user_id).all()
 
-        distinct_raters = {r.rater_id for r in ratings}
-        if len(distinct_raters) < MIN_RATERS_FOR_PUBLIC_SCORE:
-            return {
-                "meetsThreshold": False,
-                "overallScore": None,
-                "raterCount": len(distinct_raters),
-            }
-
-        average = sum(r.overall_rating for r in ratings) / len(ratings)
-        return {
-            "meetsThreshold": True,
-            "overallScore": round(average, 2),
-            "raterCount": len(distinct_raters),
-        }
+        return peer_score.compute_public_score(ratings, datetime.utcnow())
