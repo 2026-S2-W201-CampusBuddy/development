@@ -89,7 +89,7 @@ cd ~/CampusBuddy && git pull origin Release && cd backend && source venv/bin/act
 - **Scrum Master:** Hyojun Bang - Created features including main page, groceries, community, friends, AWS server, and more.
 - **Product Owner:** George Robinson - Created features including events, map, settings, currency exchange, login/signup, and more.
 - **Developer 1:** Sedric Dzikiti - Created features including weather, world clock, rentals, peer review, and more.
-- **Developer 2:** Nihash Sivkumar - As of the creation of this README (13 Oct), Nihash has made no contributions. 
+- **Developer 2:** Nihash Sivkumar - Created internship opportunity feature and study rooms feature.
 
 ## License
 This project is licensed under the MIT License — see the LICENSE file for details.
